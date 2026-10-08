@@ -1,0 +1,58 @@
+/* favorites.html */
+
+/* "All", one button per collection, "New collection" */
+.collection-bar {
+  width: 90%;
+  max-width: 1000px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.collection-bar:empty, .collection-actions:empty {
+  display: none;
+}
+
+.collection-bar button {
+  margin: 0;
+  padding: 5px 12px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.collection-bar button:hover {
+  background-color: var(--surface-active);
+}
+
+.new-collection-btn {
+  border: 2px dashed var(--text);
+  background: none;
+}
+
+.new-collection-btn ion-icon {
+  font-size: 18px;
+}
+
+/* rename / delete the collection being shown */
+.collection-actions {
+  margin: 12px auto 0;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.collection-actions .btn {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px;
+}
+
+.collection-actions ion-icon {
+  font-size: 16px;
+}

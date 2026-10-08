@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Quotes | Quote Cloud</title>
+  <script src="js/theme.js"></script>
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/images/logo.png">
+  <link rel="stylesheet" href="css/main.css">
+  <script type="module" src="https://unpkg.com/ionicons@7.4.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@7.4.0/dist/ionicons/ionicons.js"></script>
+  
+</head>
+
+<body>
+
+  <header>
+
+    <div class="logo">
+      <img src="assets/images/logo.png" alt="">
+      <h1>Quote Cloud</h1>
+    </div>
+
+    <nav>
+      <a href="index.html" class="link">HOME</a>
+      <a href="quote.html" class="link">QUOTES</a>
+      <a href="tag.html" class="link">TAGS</a>
+      <a href="author.html" class="link">AUTHORS</a>
+      <a href="favorites.html" class="link nav-icon" aria-label="My favorites" title="My favorites">
+        <ion-icon name="heart"></ion-icon>
+      </a>
+      <a href="my-quotes.html" class="link nav-icon link-active" aria-label="My quotes" title="My quotes">
+        <ion-icon name="create"></ion-icon>
+      </a>
+      <button class="theme-toggle nav-icon" aria-label="Switch theme"></button>
+    </nav>
+
+  </header>
+
+  <section id="my-quotes">
+    <h2 class="title">MY QUOTES</h2>
+
+    <!-- novalidate: my-quotes.js checks the form and shows its own messages -->
+    <form class="quote-form" novalidate>
+      <h3 class="form-title">Write your own quote</h3>
+
+      <label for="quoteText">Quote</label>
+      <textarea id="quoteText" rows="4" maxlength="300" placeholder="Something wise, funny or kind..."
+        aria-describedby="quoteTextError quoteTextCount"></textarea>
+      <div class="field-info">
+        <p class="field-error" id="quoteTextError"></p>
+        <p class="char-count" id="quoteTextCount"></p>
+      </div>
+
+      <label for="quoteAuthor">Author <small>(optional)</small></label>
+      <input type="text" id="quoteAuthor" maxlength="50" placeholder="Leave empty for Anonymous"
+        aria-describedby="quoteAuthorError">
+      <p class="field-error" id="quoteAuthorError"></p>
+
+      <div class="dialog-buttons">
+        <button type="button" class="btn cancel-edit-btn hide">Cancel</button>
+        <button type="submit" class="btn primary-btn submit-btn">Add quote</button>
+      </div>
+    </form>
+
+    <div class="quotes-wrapper"></div>
+  </section>
+
+  <!-- asks before deleting one of your quotes (opened by my-quotes.js) -->
+  <dialog class="dialog form-dialog" id="deleteDialog" aria-labelledby="deleteDialogTitle" aria-describedby="deleteDialogText">
+    <h3 id="deleteDialogTitle">Delete this quote?</h3>
+    <blockquote class="dialog-quote"></blockquote>
+    <p class="dialog-hint" id="deleteDialogText">This cannot be undone.</p>
+    <div class="dialog-buttons">
+      <!-- autofocus: Enter or Space on the safe choice doesn't delete anything -->
+      <button type="button" class="btn cancel-btn" autofocus>Cancel</button>
+      <button type="button" class="btn danger-btn confirm-delete-btn">
+        <ion-icon name="trash-outline" aria-hidden="true"></ion-icon> Delete
+      </button>
+    </div>
+  </dialog>
+
+
+  <footer>
+    <h4>&copy;ALL RIGHTS RESERVED <span class="year">2023</span></h4>
+    <p class="shortcut-hint">Press <kbd>?</kbd> for keyboard shortcuts</p>
+  </footer>
+
+  <!-- shared code first, the page's own script last -->
+  <script src="js/shared/settings.js"></script>
+  <script src="js/shared/api.js"></script>
+  <script src="js/shared/ui.js"></script>
+  <script src="js/shared/favorites-store.js"></script>
+  <script src="js/shared/quote-image.js"></script>
+  <script src="js/shared/image-dialog.js"></script>
+  <script src="js/shared/quote-card.js"></script>
+  <script src="js/shared/pagination.js"></script>
+  <script src="js/shared/layout.js"></script>
+  <script src="js/pages/my-quotes.js"></script>
+</body>
+
+</html>

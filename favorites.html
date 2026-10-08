@@ -32,6 +32,9 @@
       <a href="favorites.html" class="link nav-icon link-active" aria-label="My favorites" title="My favorites">
         <ion-icon name="heart"></ion-icon>
       </a>
+      <a href="my-quotes.html" class="link nav-icon" aria-label="My quotes" title="My quotes">
+        <ion-icon name="create"></ion-icon>
+      </a>
       <button class="theme-toggle nav-icon" aria-label="Switch theme"></button>
     </nav>
 
@@ -40,8 +43,62 @@
   <section id="favorites">
     <h2 class="title">MY FAVORITES</h2>
 
+    <!-- "All", one button per collection, and "New collection" (made in favorites.js) -->
+    <nav class="collection-bar" aria-label="Collections"></nav>
+    <div class="collection-actions"></div>
+
     <div class="quotes-wrapper"></div>
   </section>
+
+  <!-- the pop-up windows of this page, opened by favorites.js -->
+
+  <dialog class="dialog form-dialog" id="noteDialog" aria-labelledby="noteDialogTitle">
+    <h3 id="noteDialogTitle">Your note</h3>
+    <blockquote class="dialog-quote"></blockquote>
+    <form>
+      <label for="noteText">Why do you like this quote?</label>
+      <textarea id="noteText" rows="4" maxlength="200" aria-describedby="noteCount"></textarea>
+      <p class="char-count" id="noteCount"></p>
+      <div class="dialog-buttons">
+        <button type="button" class="btn delete-note-btn">Delete note</button>
+        <button type="button" class="btn cancel-btn">Cancel</button>
+        <button type="submit" class="btn primary-btn">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="dialog form-dialog" id="collectionsDialog" aria-labelledby="collectionsDialogTitle">
+    <h3 id="collectionsDialogTitle">Add to collections</h3>
+    <blockquote class="dialog-quote"></blockquote>
+    <fieldset>
+      <legend class="visually-hidden">Collections</legend>
+      <div class="collection-checkboxes"></div>
+    </fieldset>
+    <form class="new-collection-form" novalidate>
+      <label for="newCollectionName">New collection</label>
+      <div class="inline-field">
+        <input type="text" id="newCollectionName" maxlength="30" placeholder="e.g. Motivation" aria-describedby="newCollectionError">
+        <button type="submit" class="btn">Add</button>
+      </div>
+      <p class="field-error" id="newCollectionError" role="alert"></p>
+    </form>
+    <div class="dialog-buttons">
+      <button type="button" class="btn primary-btn done-btn">Done</button>
+    </div>
+  </dialog>
+
+  <dialog class="dialog form-dialog" id="collectionNameDialog" aria-labelledby="collectionNameTitle">
+    <h3 id="collectionNameTitle">New collection</h3>
+    <form novalidate>
+      <label for="collectionName">Name</label>
+      <input type="text" id="collectionName" maxlength="30" placeholder="e.g. For exams" aria-describedby="collectionNameError">
+      <p class="field-error" id="collectionNameError" role="alert"></p>
+      <div class="dialog-buttons">
+        <button type="button" class="btn cancel-btn">Cancel</button>
+        <button type="submit" class="btn primary-btn">Save</button>
+      </div>
+    </form>
+  </dialog>
 
 
   <footer>

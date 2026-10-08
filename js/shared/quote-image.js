@@ -159,7 +159,7 @@ const downloadQuoteImage = async (quote, options) => {
 
   const link = document.createElement('a')
   link.href = URL.createObjectURL(blob)
-  link.download = `quote-${quote.author.slug || 'quote-cloud'}-${options.size}.png`
+  link.download = `quote-${quote.author.slug || 'my-quote'}-${options.size}.png`
   document.body.appendChild(link)
   link.click()
   link.remove()

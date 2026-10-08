@@ -498,8 +498,170 @@
   font-size: 20px;
 }
 
-.download-btn {
+/* a button that deletes something */
+.danger-btn {
+  background-color: var(--danger);
+}
+
+.danger-btn, .danger-btn ion-icon {
+  color: #ffffff;
+}
+
+.danger-btn:hover {
+  filter: brightness(1.1);
+}
+
+/* the main button of a window or form, e.g. "Save" */
+.download-btn, .primary-btn {
   background-color: var(--surface-active);
+}
+
+/* ---------- small windows with a form (notes, collections) ---------- */
+
+.form-dialog {
+  width: min(92%, 440px);
+}
+
+.form-dialog h3 {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.form-dialog form, .form-dialog fieldset {
+  display: grid;
+  gap: 6px;
+  border: 0;
+}
+
+.form-dialog .dialog-buttons {
+  margin-top: 10px;
+}
+
+/* the quote the window is about */
+.dialog-quote {
+  margin-bottom: 15px;
+  padding: 10px;
+  border-left: 4px solid var(--text);
+  border-radius: 5px;
+  background-color: var(--panel-bg);
+  font-style: italic;
+  font-size: 14px;
+}
+
+.dialog-hint {
+  font-size: 14px;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.checkbox-row:hover {
+  background-color: var(--surface-active);
+}
+
+.checkbox-row input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--text);
+}
+
+.new-collection-form {
+  margin-top: 10px;
+}
+
+/* a text box with its button next to it */
+.inline-field {
+  display: flex;
+  gap: 8px;
+}
+
+.inline-field input {
+  flex: 1;
+  min-width: 0;
+}
+
+.inline-field .btn {
+  margin: 0;
+}
+
+/* text boxes in forms and windows (the search box has its own look) */
+.quote-form input, .quote-form textarea,
+.form-dialog input[type="text"], .form-dialog textarea {
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+}
+
+/* a field with a problem (set by setFieldError in js/shared/ui.js).
+   A border, so the focus ring can still show around it */
+input[aria-invalid="true"], textarea[aria-invalid="true"] {
+  border-color: var(--error);
+  box-shadow: 0 0 0 1px var(--error);
+}
+
+/* ---------- form messages ---------- */
+
+.field-error {
+  color: var(--error);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.field-error:empty {
+  display: none;
+}
+
+.char-count {
+  font-size: 13px;
+  text-align: right;
+}
+
+.char-count.near-limit {
+  color: var(--error);
+}
+
+/* ---------- favorites page: note and collections on the card ---------- */
+
+.card-collections {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.collection-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 8px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.collection-chip ion-icon {
+  font-size: 14px;
+}
+
+.quote-note {
+  padding: 8px 10px;
+  border-left: 4px solid var(--text);
+  border-radius: 5px;
+  background-color: var(--surface-active);
+  font-size: 14px;
+  font-style: italic;
+  overflow-wrap: anywhere;
+}
+
+/* my quotes page: the card that is open in the form */
+.picture-quote.is-editing {
+  outline: 3px solid var(--text);
+  outline-offset: 3px;
 }
 
 /* ---------- keyboard shortcuts ---------- */

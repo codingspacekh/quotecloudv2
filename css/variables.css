@@ -20,6 +20,10 @@
   /* grey shapes shown while content loads */
   --skeleton: rgba(255,255,255,0.08);
   --skeleton-shine: rgba(255,255,255,0.16);
+  /* form error messages */
+  --error: #FF8A9B;
+  /* "Delete" buttons, with white text */
+  --danger: #C93545;
 }
 
 :root[data-theme="light"] {
@@ -38,4 +42,6 @@
   --focus: #046C4E;
   --skeleton: #E2E8E6;
   --skeleton-shine: #F2F5F4;
+  --error: #B42318;
+  --danger: #B42318;
 }

@@ -1,0 +1,39 @@
+/* my-quotes.html */
+
+.quote-form {
+  width: 90%;
+  max-width: 600px;
+  margin: 0 auto 10px;
+  padding: 20px;
+  display: grid;
+  gap: 6px;
+  border-radius: 15px;
+  background-color: var(--panel-bg);
+  box-shadow: 0 0 10px var(--shadow);
+  /* room under the sticky header when the page scrolls to the form */
+  scroll-margin-top: 90px;
+}
+
+.quote-form .form-title {
+  text-align: center;
+  margin-bottom: 5px;
+}
+
+.quote-form label small {
+  font-weight: 400;
+}
+
+/* error on the left, letter count on the right */
+.field-info {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.field-info .char-count {
+  margin-left: auto;
+}
+
+.quote-form .dialog-buttons {
+  margin-top: 10px;
+}

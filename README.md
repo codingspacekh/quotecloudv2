@@ -21,7 +21,8 @@ then visit http://localhost:8000. With a server, "copy" and "download as image" 
 ├── quote.html            All quotes, search (?query=), tags (?tag=), length filter
 ├── tag.html              List of tags
 ├── author.html           List of authors, or one author (?slug=)
-├── favorites.html        Quotes saved with the ♥ button
+├── favorites.html        Quotes saved with the ♥ button, with your notes and collections
+├── my-quotes.html        Write, edit and delete your own quotes
 │
 ├── assets/images/        logo, favicon, banner and the 10 card wallpapers
 │
@@ -31,7 +32,7 @@ then visit http://localhost:8000. With a server, "copy" and "download as image" 
 │   ├── base.css          plain HTML elements (text, links, buttons, inputs)
 │   ├── layout.css        header, banner, footer
 │   ├── components.css    search box, quote cards, page buttons, messages
-│   ├── pages/            styles used by only one page
+│   ├── pages/            styles used by only one page (tags, authors, favorites, my-quotes)
 │   └── responsive.css    phone / tablet / desktop changes (keep last)
 │
 └── js/
@@ -40,13 +41,14 @@ then visit http://localhost:8000. With a server, "copy" and "download as image" 
     │   ├── settings.js       remembers small choices (theme, quote length, author sort)
     │   ├── api.js            API address, fetchJSON() (timeout + one retry), fixes broken names
     │   ├── ui.js             loading skeletons, error messages, toast pop-up
-    │   ├── favorites-store.js  save / read favorites (localStorage)
+    │   ├── favorites-store.js  favorites, notes and collections (localStorage)
     │   ├── quote-image.js    "download as image": draws the quote on a canvas
     │   ├── image-dialog.js   the window to pick image size, text size and background
     │   ├── quote-card.js     createQuoteCard() and its buttons
     │   ├── pagination.js     ← 1 … 4 [5] 6 … 85 → buttons
     │   └── layout.js         search boxes, theme button, back-to-top, keyboard shortcuts
     └── pages/            one file per page (home.js is for index.html)
+                              my-quotes.js also saves your own quotes
 ```
 
 ## How the JavaScript fits together
@@ -69,6 +71,21 @@ Every page loads the shared files in this order, then its own page file last:
 <script src="js/shared/layout.js"></script>
 <script src="js/pages/home.js"></script>
 ```
+
+## What is saved in the browser
+
+Everything below lives in `localStorage`, so it stays on this computer and browser only.
+
+| Key               | What                                             | Code |
+| ----------------- | ------------------------------------------------ | ---- |
+| `favoriteQuotes`  | favorite quotes, each with its `note` and `collections` (ids) | `js/shared/favorites-store.js` |
+| `quoteCollections`| your collections, like `{ id, name }`            | `js/shared/favorites-store.js` |
+| `myQuotes`        | quotes you wrote                                 | `js/pages/my-quotes.js` |
+| `theme`, `quoteLength`, `authorSort`, `imageSize`, `imageTextSize` | small choices | `js/shared/settings.js` |
+
+Your own quotes are stored in the same shape as quotes from the API
+(`content`, `author.name`, `tags`), plus `mine: true`, so `createQuoteCard()`
+can show them. Cards with `mine: true` get edit and delete buttons instead of the heart.
 
 ## Keyboard shortcuts
 
@@ -94,4 +111,5 @@ while you are typing in a box.
 | add an image size (download)    | `IMAGE_SIZES` in `js/shared/quote-image.js` |
 | add a keyboard shortcut         | `SHORTCUTS` and `setupShortcuts()` in `js/shared/layout.js` |
 | change the loading placeholders | `quoteSkeletons()` etc. in `js/shared/ui.js` + `.skeleton` in `css/components.css` |
-| add a new page                  | copy `favorites.html`, add a file in `js/pages/`, add a link to the `<nav>` of every page |
+| change the rules for your own quotes | `QUOTE_MIN`, `QUOTE_MAX`, `AUTHOR_MAX` and `checkQuote()` in `js/pages/my-quotes.js` |
+| add a new page                  | copy `tag.html` (the simplest page), add a file in `js/pages/`, add a link to the `<nav>` of every page |

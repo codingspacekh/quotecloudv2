@@ -1,4 +1,5 @@
 // The quote card used on every page, and what its buttons do
+// (the buttons that only some pages have are handled in that page's file)
 // needs: favorites-store.js, ui.js, image-dialog.js
 // All text from the API goes through escapeHTML (see ui.js) before it is used in HTML.
 
@@ -20,7 +21,9 @@ const getTags = (tags) => {
 }
 
 // author is an object like { id, name, slug, description, bio, link }
+// (quotes you wrote yourself have no slug, so there is no author page to link to)
 const getAuthorLink = (author) => {
+  if (!author.slug) return escapeHTML(author.name)
   return `<a href="author.html?slug=${encodeURIComponent(author.slug)}" class="link">${escapeHTML(author.name)}</a>`
 }
 
@@ -41,10 +44,46 @@ const getFavoriteButton = (quoteId) => {
 
 const getShareText = (quote) => `"${quote.content}" — ${quote.author.name}`
 
+// a small round button on the card, the click is handled by its data-action
+const actionButton = (action, icon, label) => {
+  return `
+  <button class="card-action" data-action="${action}" aria-label="${label}" title="${label}">
+    <ion-icon name="${icon}"></ion-icon>
+  </button>
+  `
+}
+
+// first buttons on the card: the heart, or edit + delete for quotes you wrote (my-quotes.js)
+const getMainButtons = (quote) => {
+  if (quote.mine) {
+    return actionButton('edit', 'create-outline', 'Edit quote') + actionButton('delete', 'trash-outline', 'Delete quote')
+  }
+  return getFavoriteButton(quote.id)
+}
+
+// favorites page only: your note and collections (handled in favorites.js)
+const getFavoriteTools = (quote) => {
+  let names = getCollections()
+    .filter(collection => isInCollection(quote, collection.id))
+    .map(collection => `<span class="collection-chip"><ion-icon name="folder-outline" aria-hidden="true"></ion-icon>${escapeHTML(collection.name)}</span>`)
+    .join('')
+
+  return {
+    info: `
+      ${names ? `<div class="card-collections" aria-label="Collections">${names}</div>` : ''}
+      ${quote.note ? `<p class="quote-note"><span class="visually-hidden">Your note: </span>${escapeHTML(quote.note)}</p>` : ''}
+    `,
+    buttons: actionButton('note', 'chatbox-ellipses-outline', quote.note ? 'Edit your note' : 'Add a note')
+      + actionButton('collections', 'folder-outline', 'Add to a collection'),
+  }
+}
+
 // the quote text is shown once, on top of the picture
-const createQuoteCard = (quote, imgIndex = Math.floor(Math.random() * WALLPAPER_COUNT)) => {
+// options.favoriteTools: show your note and collection buttons (favorites page)
+const createQuoteCard = (quote, imgIndex = Math.floor(Math.random() * WALLPAPER_COUNT), options = {}) => {
   shownQuotes[quote.id] = quote
   let shareText = encodeURIComponent(getShareText(quote))
+  let tools = options.favoriteTools ? getFavoriteTools(quote) : { info: '', buttons: '' }
 
   return `
   <div class="picture-quote" data-id="${escapeHTML(quote.id)}" data-wallpaper="${imgIndex % WALLPAPER_COUNT}">
@@ -58,14 +97,12 @@ const createQuoteCard = (quote, imgIndex = Math.floor(Math.random() * WALLPAPER_
       <div class="tags">
         ${getTags(quote.tags)}
       </div>
+      ${tools.info}
       <div class="card-actions">
-        ${getFavoriteButton(quote.id)}
-        <button class="card-action" data-action="copy" aria-label="Copy quote" title="Copy quote">
-          <ion-icon name="copy-outline"></ion-icon>
-        </button>
-        <button class="card-action" data-action="download" aria-label="Download as image" title="Download as image">
-          <ion-icon name="download-outline"></ion-icon>
-        </button>
+        ${getMainButtons(quote)}
+        ${tools.buttons}
+        ${actionButton('copy', 'copy-outline', 'Copy quote')}
+        ${actionButton('download', 'download-outline', 'Download as image')}
         <a class="card-action" href="https://wa.me/?text=${shareText}" target="_blank" rel="noopener" aria-label="Share on WhatsApp" title="Share on WhatsApp">
           <ion-icon name="logo-whatsapp"></ion-icon>
         </a>
@@ -114,6 +151,11 @@ document.addEventListener('click', async (e) => {
   const quote = shownQuotes[card.dataset.id]
 
   if (btn.dataset.action === 'favorite') {
+    // removing a favorite also removes your note and collections, so ask first
+    let saved = getFavorite(quote.id)
+    if (saved && (saved.note || getQuoteCollections(saved).length > 0)) {
+      if (!confirm('Remove this quote from your favorites? Your note and collections for it will be deleted too.')) return
+    }
     let favorite = toggleFavorite(quote)
     // the same quote can be on the page twice (e.g. quote of the day + famous quotes)
     document.querySelectorAll(`.picture-quote[data-id="${CSS.escape(quote.id)}"] [data-action="favorite"]`).forEach(button => {

@@ -95,6 +95,15 @@ const showError = (container, message, onRetry, error) => {
   window.addEventListener('online', retry)
 }
 
+// ---------- form errors ----------
+
+// shows the message under a form field, or clears it when message is ''
+// aria-invalid tells screen readers the field has a problem
+const setFieldError = (field, errorElement, message) => {
+  errorElement.textContent = message
+  field.setAttribute('aria-invalid', message ? 'true' : 'false')
+}
+
 // ---------- small pop-up message ----------
 
 let toastTimer = null

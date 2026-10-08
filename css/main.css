@@ -7,4 +7,6 @@
 @import url('components.css');
 @import url('pages/tags.css');
 @import url('pages/authors.css');
+@import url('pages/favorites.css');
+@import url('pages/my-quotes.css');
 @import url('responsive.css');
