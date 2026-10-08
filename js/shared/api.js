@@ -52,6 +52,12 @@ const REQUEST_TIMEOUT = 8000
 
 const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
+// Tells the page if the quotes service could be reached (layout.js shows a bar when not).
+// navigator.onLine alone isn't enough: on Wi-Fi without internet it still says "online".
+const reportConnection = (online) => {
+  document.dispatchEvent(new CustomEvent('connection-change', { detail: { online } }))
+}
+
 // One try. When it fails, the error says why:
 //   error.status = 404, 500, ...    the API answered with an error
 //   error.reason = 'timeout'        the API took too long
@@ -67,6 +73,8 @@ const fetchOnce = async (url) => {
       error.status = response.status
       throw error
     }
+    // no internet, so sw.js answered with a copy saved earlier
+    reportConnection(!response.headers.get('X-Saved-Copy'))
     return await response.json()
   } catch (error) {
     if (controller.signal.aborted) {
@@ -74,6 +82,7 @@ const fetchOnce = async (url) => {
     } else if (error instanceof TypeError) {
       // fetch throws a TypeError when it gets no answer
       error.reason = 'network'
+      reportConnection(false)
     }
     throw error
   } finally {

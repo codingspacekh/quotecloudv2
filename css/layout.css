@@ -75,3 +75,30 @@ footer {
   padding: 15px;
   background-color: var(--footer-bg);
 }
+
+/* shown under the header while there is no internet (made in js/shared/layout.js).
+   It pushes the page down, so it never covers anything
+   (on the home page it sits on top of the big picture) */
+.offline-banner {
+  position: relative;
+  z-index: 98;
+  padding: 6px 15px;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--surface-active);
+  box-shadow: 0 2px 6px var(--shadow);
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.offline-banner.show {
+  display: flex;
+}
+
+.offline-banner ion-icon {
+  flex-shrink: 0;
+  font-size: 20px;
+}

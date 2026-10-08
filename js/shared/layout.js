@@ -161,9 +161,45 @@ const setupShortcuts = () => {
 
 // ---------- offline / online ----------
 
+// a bar under the header while there is no internet
 const setupConnectionMessages = () => {
-  window.addEventListener('offline', () => showToast('You are offline'))
-  window.addEventListener('online', () => showToast('Back online'))
+  const banner = document.createElement('div')
+  banner.className = 'offline-banner'
+  banner.setAttribute('role', 'status')
+  banner.innerHTML = `
+  <ion-icon name="cloud-offline-outline" aria-hidden="true"></ion-icon>
+  <span>You are offline. Quotes you already saw, your favorites and your own quotes still work.</span>
+  `
+  document.querySelector('header').after(banner)
+
+  // false when the browser says it's offline, or the quotes service can't be reached (api.js)
+  let online = navigator.onLine
+
+  const update = (nowOnline) => {
+    if (nowOnline === online) return
+    online = nowOnline
+    banner.classList.toggle('show', !online)
+    if (online) showToast('Back online')
+  }
+  banner.classList.toggle('show', !online)
+
+  window.addEventListener('offline', () => update(false))
+  window.addEventListener('online', () => update(true))
+  document.addEventListener('connection-change', (e) => update(e.detail.online))
+}
+
+// sw.js keeps copies of the site and the quotes you saw, so they open without internet
+const registerServiceWorker = () => {
+  // service workers only work on http(s) pages, e.g. a local server (see README),
+  // not on a page opened by double-clicking the file
+  if (!('serviceWorker' in navigator) || window.location.protocol === 'file:') return
+
+  // wait until the page has loaded, so saving the files doesn't slow it down
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(error => {
+      console.log('offline mode is not available:', error.message)
+    })
+  })
 }
 
 setupSearchForms()
@@ -172,3 +208,4 @@ setFooterYear()
 setupBackToTop()
 setupShortcuts()
 setupConnectionMessages()
+registerServiceWorker()

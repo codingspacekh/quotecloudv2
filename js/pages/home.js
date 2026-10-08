@@ -66,13 +66,22 @@ const getFamousQuotes = async () => {
   try {
     // pages start at 0, there are about 80 pages of famous quotes
     let page = Math.floor(Math.random() * 80)
-    let data = await fetchJSON(FAMOUS_QUOTE_URL + `&page=${page}`)
+    let data
+    try {
+      data = await fetchJSON(FAMOUS_QUOTE_URL + `&page=${page}`)
+    } catch (error) {
+      if (error.reason !== 'network' && error.reason !== 'timeout') throw error
+      // no internet: only pages seen before are saved (see sw.js), so show the last one again
+      page = parseInt(loadSetting('famousPage', '0'))
+      data = await fetchJSON(FAMOUS_QUOTE_URL + `&page=${page}`)
+    }
 
     // if there are fewer pages now, pick again using the real page count
     if (data.data.length === 0) {
       page = Math.floor(Math.random() * (data.metadata.lastPage + 1))
       data = await fetchJSON(FAMOUS_QUOTE_URL + `&page=${page}`)
     }
+    saveSetting('famousPage', page)
 
     let quotes = data.data.slice(0, FAMOUS_QUOTE_COUNT)
     quotesWrapper.innerHTML = quotes.map((quote, i) => createQuoteCard(quote, i)).join('')
