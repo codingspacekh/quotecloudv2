@@ -1,0 +1,77 @@
+/* Header, banner and footer (the same on every page) */
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo img {
+  width: 72px;
+}
+
+.logo h1 {
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 18px;
+}
+
+header {
+  background-color: var(--header-bg);
+  padding: 5px 10px;
+  position: sticky;
+  top: 0;
+  z-index: 99;
+  height: 75px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+header nav {
+  flex-grow: 1;
+
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+}
+
+/* the heart link and the theme button in the header */
+.nav-icon {
+  display: flex;
+  align-items: center;
+}
+
+.nav-icon ion-icon {
+  font-size: 22px;
+}
+
+.theme-toggle {
+  margin: 0;
+  padding: 0;
+  background: none;
+}
+
+.theme-toggle:hover ion-icon {
+  color: var(--text-hover);
+}
+
+.banner {
+  height: 400px;
+  margin-top: -75px;
+  padding-top: 75px;
+  background-image: url('../assets/images/banner.webp');
+  background-position: bottom;
+  background-size: cover;
+
+  display: grid;
+  place-items: center;
+}
+
+footer {
+  text-align: center;
+  padding: 15px;
+  background-color: var(--footer-bg);
+}

@@ -17,14 +17,14 @@ const getAllTags = async () => {
     tagsWrapper.innerHTML = sortedTags.map(tag => {
       return `
       <a href="quote.html?tag=${encodeURIComponent(tag.name)}" class="link tag-card">
-        ${tag.name} <span class="count">${tag.quotesCount}</span>
+        ${escapeHTML(tag.name)} <span class="count">${tag.quotesCount}</span>
       </a>
       `
     }).join('')
 
   } catch (error) {
     console.log('some error occurred:', error.message)
-    tagsWrapper.innerHTML = messageView('Could not load tags.')
+    showError(tagsWrapper, 'Could not load tags.', getAllTags)
   }
 }
 

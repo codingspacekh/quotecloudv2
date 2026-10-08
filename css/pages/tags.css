@@ -1,0 +1,21 @@
+/* tag.html */
+
+.tag-list {
+  width: 90%;
+  margin: 15px auto 30px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.tag-card {
+  background-color: var(--surface);
+  padding: 8px 15px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px var(--shadow);
+}
+
+.tag-card:hover {
+  background-color: var(--surface-active);
+}

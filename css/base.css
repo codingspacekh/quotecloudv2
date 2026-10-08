@@ -1,0 +1,93 @@
+/* Default look of plain HTML elements */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Titillium Web', sans-serif;
+  color: var(--text);
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+a {
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 1px;
+}
+
+.link {
+  box-sizing: border-box;
+}
+
+.link:hover {
+  color: var(--text-hover);
+}
+
+.link-active {
+  border-bottom: 2px solid;
+}
+
+input, button, select {
+  padding: 5px 10px;
+  font-size: 16px;
+  border: 0;
+}
+
+button {
+  cursor: pointer;
+  margin: auto;
+  display: block;
+  border-radius: 5px;
+  background-color: var(--surface);
+  font-weight: 600;
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+input {
+  background-color: var(--input-bg);
+}
+
+/* Keyboard users need to see where they are.
+   :focus-visible shows the ring for the keyboard (Tab), not for mouse clicks. */
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* the search box shows the ring around the whole form instead (see components.css) */
+.search-form input:focus-visible {
+  outline: none;
+}
+
+ion-icon {
+  font-size: 32px;
+}
+
+.title {
+  text-align: center;
+  margin: 15px auto;
+  padding: 5px;
+  border-bottom: 5px solid;
+  width: fit-content;
+  letter-spacing: 2px;
+}
+
+img {
+  width: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* hides anything, even elements that set their own display */
+.hide {
+  display: none !important;
+}

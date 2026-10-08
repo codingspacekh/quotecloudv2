@@ -36,7 +36,7 @@ const getQuoteOfTheDay = async () => {
 
   } catch (error) {
     console.log('some error occurred:', error.message)
-    todayQuoteWapper.innerHTML = messageView('Could not load the quote of the day. Please refresh the page.')
+    showError(todayQuoteWapper, 'Could not load the quote of the day.', getQuoteOfTheDay)
   }
 }
 
@@ -55,7 +55,7 @@ const getRandomQuote = async () => {
 
   } catch (error) {
     console.log('some error occurred:', error.message)
-    todayQuoteWapper.innerHTML = messageView('Could not load a quote. Please try again.')
+    showError(todayQuoteWapper, 'Could not load a quote.', getRandomQuote)
   }
   randomBtn.disabled = false
 }
@@ -79,7 +79,7 @@ const getFamousQuotes = async () => {
 
   } catch (error) {
     console.log('some error occurred:', error.message)
-    quotesWrapper.innerHTML = messageView('Could not load famous quotes.')
+    showError(quotesWrapper, 'Could not load famous quotes.', getFamousQuotes)
   }
 }
 

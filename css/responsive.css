@@ -1,0 +1,56 @@
+/* Changes for bigger and smaller screens. Keep this file last. */
+
+@media only screen and (min-width: 768px) {
+  .author-list {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .quotes-wrapper {
+    padding: 15px;
+    grid-template-columns: 1fr 1fr;
+    justify-content: center;
+    width: 90%;
+    margin: auto;
+  }
+}
+
+@media only screen and (min-width: 1000px) {
+  .quotes-wrapper, .author-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* small phones: make the header fit so the page doesn't scroll sideways */
+@media only screen and (max-width: 600px) {
+  .logo img {
+    width: 48px;
+  }
+
+  .logo h1 {
+    display: none;
+  }
+
+  header nav {
+    gap: 10px;
+  }
+
+  header nav a {
+    font-size: 14px;
+    letter-spacing: 0;
+  }
+
+  .search-form {
+    width: 90%;
+  }
+
+  .overlay blockquote {
+    font-size: 16px;
+  }
+}
+
+/* very small phones: the menu needs all the room */
+@media only screen and (max-width: 400px) {
+  .logo {
+    display: none;
+  }
+}

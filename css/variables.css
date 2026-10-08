@@ -1,0 +1,36 @@
+/* Colors for the dark and light themes.
+   js/theme.js sets data-theme="dark" or "light" on <html> */
+
+:root,
+:root[data-theme="dark"] {
+  --bg: #363B4E;
+  --text: #03C988;
+  --text-hover: #ffffff;
+  --surface: #182747;
+  --surface-active: #395B64;
+  --border: #182747;
+  --shadow: #182747;
+  --header-bg: rgba(0,0,0,0.75);
+  --footer-bg: rgba(0,0,0,0.5);
+  --panel-bg: rgba(0,0,0,0.25);
+  --input-bg: #ffffff;
+  /* text on top of the wallpapers stays the same in both themes */
+  --overlay-text: #03C988;
+  --focus: #03C988;
+}
+
+:root[data-theme="light"] {
+  --bg: #F2F5F4;
+  --text: #046C4E;
+  --text-hover: #022C22;
+  --surface: #ffffff;
+  --surface-active: #CDEBDF;
+  --border: #D5DEDB;
+  --shadow: rgba(0,0,0,0.12);
+  --header-bg: rgba(255,255,255,0.92);
+  --footer-bg: #E2E8E6;
+  --panel-bg: #ffffff;
+  --input-bg: #ffffff;
+  --overlay-text: #03C988;
+  --focus: #046C4E;
+}

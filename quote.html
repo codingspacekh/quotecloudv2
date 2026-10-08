@@ -6,9 +6,10 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quotes | Quote Cloud</title>
-  <link rel="stylesheet" href="style.css">
-  <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-  <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+  <script src="js/theme.js"></script>
+  <link rel="stylesheet" href="css/main.css">
+  <script type="module" src="https://unpkg.com/ionicons@7.4.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@7.4.0/dist/ionicons/ionicons.js"></script>
   
 </head>
 
@@ -17,7 +18,7 @@
   <header>
 
     <div class="logo">
-      <img src="./logo.png" alt="">
+      <img src="assets/images/logo.png" alt="">
       <h1>Quote Cloud</h1>
     </div>
 
@@ -26,6 +27,10 @@
       <a href="quote.html" class="link link-active">QUOTES</a>
       <a href="tag.html" class="link">TAGS</a>
       <a href="author.html" class="link">AUTHORS</a>
+      <a href="favorites.html" class="link nav-icon" aria-label="My favorites" title="My favorites">
+        <ion-icon name="heart"></ion-icon>
+      </a>
+      <button class="theme-toggle nav-icon" aria-label="Switch theme"></button>
     </nav>
 
   </header>
@@ -38,48 +43,39 @@
       </button>
     </form>
 
+    <div class="filters">
+      <label for="lengthFilter">Quote length:</label>
+      <select id="lengthFilter">
+        <option value="all">All lengths</option>
+        <option value="short">Short (under 60 letters)</option>
+        <option value="medium">Medium (60 - 150 letters)</option>
+        <option value="long">Long (over 150 letters)</option>
+      </select>
+    </div>
+
     <h2 class="title">QUOTES</h2>
 
-    <div class="quotes-wrapper">
-      <!-- <div class="picture-quote">
-        <div class="frame" style="background-image: url('./images/wallpaper1.jpeg');">
-          <div class="overlay">
-            <h2>Being positive in negative world! <br><cite>Coolblood</cite></h2>
-          </div>
-        </div>
-        <blockquote class="content">
-          <p>Being positive in negative world</p>
-          <cite><a href="#" class="link">Coolblood</a></cite>
-          <div class="tags">
-            <a href="#" class="link tag-link">Inspiration</a>
-            <a href="#" class="link tag-link">Wisdom</a>
-            <a href="#" class="link tag-link">Positive</a>
-          </div>
-        </blockquote>
-      </div> -->
-      
-    </div>
+    <div class="quotes-wrapper"></div>
 
-    <div class="btn-group">
-      <!-- <button class="btn" id="prevBtn">&LeftArrow;</button>
-      <button class="btn btn-active" data-page="1">1</button>
-      <button class="btn" data-page="2">2</button>
-      <button class="btn" data-page="3">3</button>
-      <button class="btn" id="nextBtn">&RightArrow;</button> -->
-    </div>
-
+    <div class="btn-group"></div>
 
 
   </section>
-
 
 
   <footer>
     <h4>&copy;ALL RIGHTS RESERVED <span class="year">2023</span></h4>
   </footer>
 
-  <script src="common.js"></script>
-  <script src="quote.js"></script>
+  <!-- shared code first, the page's own script last -->
+  <script src="js/shared/api.js"></script>
+  <script src="js/shared/ui.js"></script>
+  <script src="js/shared/favorites-store.js"></script>
+  <script src="js/shared/quote-image.js"></script>
+  <script src="js/shared/quote-card.js"></script>
+  <script src="js/shared/pagination.js"></script>
+  <script src="js/shared/layout.js"></script>
+  <script src="js/pages/quotes.js"></script>
 </body>
 
 </html>

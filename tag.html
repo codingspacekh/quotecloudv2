@@ -6,9 +6,10 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tags | Quote Cloud</title>
-  <link rel="stylesheet" href="style.css">
-  <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-  <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+  <script src="js/theme.js"></script>
+  <link rel="stylesheet" href="css/main.css">
+  <script type="module" src="https://unpkg.com/ionicons@7.4.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@7.4.0/dist/ionicons/ionicons.js"></script>
   
 </head>
 
@@ -17,7 +18,7 @@
   <header>
 
     <div class="logo">
-      <img src="./logo.png" alt="">
+      <img src="assets/images/logo.png" alt="">
       <h1>Quote Cloud</h1>
     </div>
 
@@ -26,6 +27,10 @@
       <a href="quote.html" class="link">QUOTES</a>
       <a href="tag.html" class="link link-active">TAGS</a>
       <a href="author.html" class="link">AUTHORS</a>
+      <a href="favorites.html" class="link nav-icon" aria-label="My favorites" title="My favorites">
+        <ion-icon name="heart"></ion-icon>
+      </a>
+      <button class="theme-toggle nav-icon" aria-label="Switch theme"></button>
     </nav>
 
   </header>
@@ -44,13 +49,19 @@
   </section>
 
 
-
   <footer>
     <h4>&copy;ALL RIGHTS RESERVED <span class="year">2023</span></h4>
   </footer>
 
-  <script src="common.js"></script>
-  <script src="tag.js"></script>
+  <!-- shared code first, the page's own script last -->
+  <script src="js/shared/api.js"></script>
+  <script src="js/shared/ui.js"></script>
+  <script src="js/shared/favorites-store.js"></script>
+  <script src="js/shared/quote-image.js"></script>
+  <script src="js/shared/quote-card.js"></script>
+  <script src="js/shared/pagination.js"></script>
+  <script src="js/shared/layout.js"></script>
+  <script src="js/pages/tags.js"></script>
 </body>
 
 </html>

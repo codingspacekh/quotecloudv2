@@ -1,0 +1,70 @@
+/* author.html */
+
+.letter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 5px;
+}
+
+.letter-bar button {
+  margin: 0;
+  min-width: 34px;
+  padding: 3px 6px;
+}
+
+.result-count {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.author-list {
+  width: 90%;
+  margin: 15px auto;
+  display: grid;
+  gap: 15px;
+}
+
+.author-list:empty, .author-info:empty, .quotes-wrapper:empty {
+  display: none;
+}
+
+.author-card {
+  display: grid;
+  gap: 5px;
+  align-content: start;
+  padding: 15px;
+  border: 2px solid var(--border);
+  border-radius: 15px;
+  background-color: var(--panel-bg);
+  box-shadow: inset 0 0 10px var(--shadow), 0 0 10px var(--shadow);
+}
+
+.author-card:hover {
+  background-color: var(--surface-active);
+}
+
+.author-card p {
+  font-weight: 400;
+  font-size: 14px;
+}
+
+.author-card .count {
+  justify-self: start;
+  margin-left: 0;
+}
+
+.author-info {
+  width: 90%;
+  max-width: 800px;
+  margin: 15px auto;
+  padding: 15px;
+  display: grid;
+  gap: 10px;
+  border-radius: 15px;
+  background-color: var(--panel-bg);
+}
+
+.author-info .description {
+  font-style: italic;
+}
