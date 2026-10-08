@@ -1,5 +1,5 @@
 // The quote card used on every page, and what its buttons do
-// needs: favorites-store.js, ui.js, quote-image.js
+// needs: favorites-store.js, ui.js, image-dialog.js
 // All text from the API goes through escapeHTML (see ui.js) before it is used in HTML.
 
 // there are 10 wallpapers in assets/images/wallpapers (wallpaper0.jpeg ... wallpaper9.jpeg)
@@ -134,14 +134,7 @@ document.addEventListener('click', async (e) => {
   }
 
   if (btn.dataset.action === 'download') {
-    btn.disabled = true
-    try {
-      await downloadQuoteImage(quote, parseInt(card.dataset.wallpaper))
-      showToast('Image downloaded')
-    } catch (error) {
-      console.log('some error occurred:', error.message)
-      showToast('Could not create the image')
-    }
-    btn.disabled = false
+    // opens the window to pick the size and background (image-dialog.js)
+    openImageDialog(quote, parseInt(card.dataset.wallpaper))
   }
 })

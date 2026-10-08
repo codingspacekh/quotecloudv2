@@ -20,6 +20,17 @@
   }
 }
 
+/* phones: the "Download as image" window shows the preview above the choices */
+@media only screen and (max-width: 700px) {
+  .image-form {
+    grid-template-columns: 1fr;
+  }
+
+  .image-preview canvas {
+    max-height: 35vh;
+  }
+}
+
 /* small phones: make the header fit so the page doesn't scroll sideways */
 @media only screen and (max-width: 600px) {
   .logo img {

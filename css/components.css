@@ -337,11 +337,13 @@
   font-size: 24px;
 }
 
-/* ---------- keyboard shortcuts ---------- */
+/* ---------- pop-up windows (<dialog>) ---------- */
 
-.shortcuts-dialog {
+.dialog {
   margin: auto;
-  width: min(90%, 360px);
+  max-height: 92vh;
+  /* taller than the screen (e.g. on phones): scroll inside the window */
+  overflow-y: auto;
   padding: 20px;
   border: 2px solid var(--border);
   border-radius: 15px;
@@ -349,8 +351,161 @@
   box-shadow: 0 0 20px var(--shadow);
 }
 
-.shortcuts-dialog::backdrop {
+.dialog::backdrop {
   background-color: rgba(0,0,0,0.6);
+}
+
+/* ---------- "Download as image" window (made in js/shared/image-dialog.js) ---------- */
+
+.image-dialog {
+  width: min(95%, 860px);
+}
+
+.image-dialog h3 {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+/* preview on the left, choices on the right (one under the other on phones) */
+.image-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.image-preview {
+  display: grid;
+  place-items: center;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: var(--panel-bg);
+}
+
+/* the canvas is 1080px or more, show it smaller but keep its shape */
+.image-preview canvas {
+  display: block;
+  max-width: 100%;
+  max-height: 60vh;
+  width: auto;
+  height: auto;
+  border-radius: 5px;
+}
+
+.image-options {
+  display: grid;
+  gap: 15px;
+}
+
+.image-options fieldset {
+  border: 0;
+}
+
+.image-options legend {
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* the real radio button is hidden (but still works with the keyboard),
+   the box next to it shows if it's picked */
+.choice, .background-choice {
+  position: relative;
+  cursor: pointer;
+}
+
+.choice span {
+  display: block;
+  padding: 5px 12px;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  background-color: var(--surface);
+  font-weight: 600;
+}
+
+.choice small {
+  display: block;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.choice:hover span {
+  background-color: var(--surface-active);
+}
+
+.choice input:checked + span {
+  border-color: var(--text);
+  background-color: var(--surface-active);
+}
+
+.background-choices {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(52px, 1fr));
+  gap: 8px;
+}
+
+.thumb {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  border: 3px solid transparent;
+  border-radius: 10px;
+  background-size: cover;
+  background-position: center;
+}
+
+.thumb-plain {
+  background-color: #182747;
+  color: #03C988;
+  font-weight: 700;
+}
+
+.background-choice:hover .thumb {
+  border-color: var(--surface-active);
+}
+
+.background-choice input:checked + .thumb {
+  border-color: var(--text);
+}
+
+/* keyboard users see which choice they are on */
+.choice input:focus-visible + span,
+.background-choice input:focus-visible + .thumb {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.dialog-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.dialog-buttons .btn {
+  margin: 0;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.dialog-buttons ion-icon {
+  font-size: 20px;
+}
+
+.download-btn {
+  background-color: var(--surface-active);
+}
+
+/* ---------- keyboard shortcuts ---------- */
+
+.shortcuts-dialog {
+  width: min(90%, 360px);
 }
 
 .shortcuts-dialog h3 {

@@ -94,7 +94,7 @@ const showShortcuts = () => {
   let dialog = document.querySelector('.shortcuts-dialog')
   if (!dialog) {
     dialog = document.createElement('dialog')
-    dialog.className = 'shortcuts-dialog'
+    dialog.className = 'dialog shortcuts-dialog'
     dialog.setAttribute('aria-labelledby', 'shortcutsTitle')
     dialog.innerHTML = `
     <h3 id="shortcutsTitle">Keyboard shortcuts</h3>

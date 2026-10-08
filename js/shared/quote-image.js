@@ -1,4 +1,19 @@
 // "Download as image": draws a quote on a <canvas> and saves it as a PNG
+// (the window where you choose the options is in image-dialog.js)
+
+// the image sizes you can choose, in pixels
+const IMAGE_SIZES = {
+  square: { label: 'Square', hint: 'Posts', width: 1080, height: 1080 },
+  story: { label: 'Story', hint: 'Phone stories', width: 1080, height: 1920 },
+  wide: { label: 'Wide', hint: 'X, slides', width: 1920, height: 1080 },
+}
+
+// how big the text is, compared to "Medium"
+const TEXT_SIZES = {
+  small: { label: 'Small', scale: 0.8 },
+  medium: { label: 'Medium', scale: 1 },
+  large: { label: 'Large', scale: 1.25 },
+}
 
 const loadImage = (src) => {
   return new Promise((resolve, reject) => {
@@ -7,6 +22,31 @@ const loadImage = (src) => {
     img.onerror = reject
     img.src = src
   })
+}
+
+// pictures that were loaded once, so switching backgrounds in the preview is instant
+const wallpaperCache = {}
+
+// returns the picture, or null when it could not be loaded
+const loadWallpaper = (index) => {
+  if (!wallpaperCache[index]) {
+    wallpaperCache[index] = loadImage(getWallpaper(index)).catch(() => {
+      // try again next time
+      delete wallpaperCache[index]
+      return null
+    })
+  }
+  return wallpaperCache[index]
+}
+
+// wait for the web font, otherwise the canvas uses a default font
+const loadFonts = async () => {
+  try {
+    await document.fonts.load('700 48px "Titillium Web"')
+    await document.fonts.load('italic 600 40px "Titillium Web"')
+  } catch (error) {
+    // the default font is fine too
+  }
 }
 
 // splits the text into lines that fit inside maxWidth
@@ -27,33 +67,47 @@ const wrapText = (ctx, text, maxWidth) => {
   return lines
 }
 
-const drawQuote = (ctx, size, quote, wallpaper) => {
-  // background: the wallpaper cropped to a square, or a plain color
+// options: { size, textSize, wallpaper }
+//   size      'square', 'story' or 'wide' (see IMAGE_SIZES)
+//   textSize  'small', 'medium' or 'large' (see TEXT_SIZES)
+//   wallpaper a loaded picture, or null for a plain color
+const drawQuote = (canvas, quote, options) => {
+  const { width, height } = IMAGE_SIZES[options.size]
+  const scale = TEXT_SIZES[options.textSize].scale
+  const wallpaper = options.wallpaper
+
+  // changing the size also clears the canvas
+  canvas.width = width
+  canvas.height = height
+  const ctx = canvas.getContext('2d')
+
+  // background: the wallpaper cropped to fill the image, or a plain color
   if (wallpaper) {
-    let scale = Math.max(size / wallpaper.width, size / wallpaper.height)
-    let width = wallpaper.width * scale
-    let height = wallpaper.height * scale
-    ctx.drawImage(wallpaper, (size - width) / 2, (size - height) / 2, width, height)
+    let zoom = Math.max(width / wallpaper.width, height / wallpaper.height)
+    let picWidth = wallpaper.width * zoom
+    let picHeight = wallpaper.height * zoom
+    ctx.drawImage(wallpaper, (width - picWidth) / 2, (height - picHeight) / 2, picWidth, picHeight)
   } else {
     ctx.fillStyle = '#182747'
-    ctx.fillRect(0, 0, size, size)
+    ctx.fillRect(0, 0, width, height)
   }
   ctx.fillStyle = 'rgba(0, 0, 0, 0.6)'
-  ctx.fillRect(0, 0, size, size)
+  ctx.fillRect(0, 0, width, height)
 
   // make the font smaller until the quote fits
-  let padding = 110
-  let fontSize = 68
+  // (so a big text size only stays big when the quote is short enough)
+  let padding = width * 0.1
+  let fontSize = Math.round(68 * scale)
   let lines = []
   do {
     fontSize -= 4
     ctx.font = `700 ${fontSize}px "Titillium Web", sans-serif`
-    lines = wrapText(ctx, `“${quote.content}”`, size - padding * 2)
-  } while (lines.length * fontSize * 1.35 > size - 380 && fontSize > 28)
+    lines = wrapText(ctx, `“${quote.content}”`, width - padding * 2)
+  } while (lines.length * fontSize * 1.35 > height - 380 && fontSize > 28)
 
   let lineHeight = fontSize * 1.35
   let textHeight = lines.length * lineHeight
-  let y = (size - textHeight) / 2 - 30
+  let y = (height - textHeight) / 2 - 30
 
   ctx.textAlign = 'center'
   ctx.textBaseline = 'top'
@@ -61,16 +115,17 @@ const drawQuote = (ctx, size, quote, wallpaper) => {
   ctx.shadowColor = '#000000'
   ctx.shadowBlur = 6
   lines.forEach((line, i) => {
-    ctx.fillText(line, size / 2, y + i * lineHeight)
+    ctx.fillText(line, width / 2, y + i * lineHeight)
   })
 
-  ctx.font = `italic 600 40px "Titillium Web", sans-serif`
-  ctx.fillText(`— ${quote.author.name}`, size / 2, y + textHeight + 40)
+  let authorSize = Math.round(40 * scale)
+  ctx.font = `italic 600 ${authorSize}px "Titillium Web", sans-serif`
+  ctx.fillText(`— ${quote.author.name}`, width / 2, y + textHeight + authorSize)
 
   ctx.shadowBlur = 0
   ctx.font = `700 28px "Titillium Web", sans-serif`
   ctx.fillStyle = 'rgba(255, 255, 255, 0.7)'
-  ctx.fillText('QUOTE CLOUD', size / 2, size - 80)
+  ctx.fillText('QUOTE CLOUD', width / 2, height - 80)
 }
 
 const canvasToBlob = (canvas) => {
@@ -84,43 +139,30 @@ const canvasToBlob = (canvas) => {
   })
 }
 
-const downloadQuoteImage = async (quote, wallpaperIndex) => {
-  const size = 1080
+// draws the image and saves it, options are the same as for drawQuote.
+// returns false when the picture had to be left out (see below)
+const downloadQuoteImage = async (quote, options) => {
+  await loadFonts()
   const canvas = document.createElement('canvas')
-  canvas.width = size
-  canvas.height = size
-  const ctx = canvas.getContext('2d')
+  drawQuote(canvas, quote, options)
 
-  // wait for the web font, otherwise the canvas uses a default font
-  try {
-    await document.fonts.load('700 48px "Titillium Web"')
-    await document.fonts.load('italic 600 40px "Titillium Web"')
-  } catch (error) {
-    // the default font is fine too
-  }
-
-  let wallpaper = null
-  try {
-    wallpaper = await loadImage(getWallpaper(wallpaperIndex))
-  } catch (error) {
-    // no picture, drawQuote uses a plain background
-  }
-
-  drawQuote(ctx, size, quote, wallpaper)
+  let withPicture = true
   let blob
   try {
     blob = await canvasToBlob(canvas)
   } catch (error) {
     // browsers block reading pictures from file:// pages, so draw it again without the picture
-    drawQuote(ctx, size, quote, null)
+    drawQuote(canvas, quote, { ...options, wallpaper: null })
     blob = await canvasToBlob(canvas)
+    withPicture = false
   }
 
   const link = document.createElement('a')
   link.href = URL.createObjectURL(blob)
-  link.download = `quote-${quote.author.slug || 'quote-cloud'}.png`
+  link.download = `quote-${quote.author.slug || 'quote-cloud'}-${options.size}.png`
   document.body.appendChild(link)
   link.click()
   link.remove()
   setTimeout(() => URL.revokeObjectURL(link.href), 1000)
+  return withPicture
 }
