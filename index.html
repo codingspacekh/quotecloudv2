@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quote Cloud</title>
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+</head>
+
+<body>
+
+  <header>
+
+    <div class="logo">
+      <img src="./logo.png" alt="">
+      <h1>Quote Cloud</h1>
+    </div>
+
+    <nav>
+      <a href="index.html" class="link link-active">HOME</a>
+      <a href="quote.html" class="link">QUOTES</a>
+      <a href="tag.html" class="link">TAGS</a>
+      <a href="author.html" class="link">AUTHORS</a>
+    </nav>
+
+  </header>
+
+  <div class="banner">
+    <form id="searchForm" class="search-form" role="search">
+      <input type="search" id="searchTerm" placeholder="Search quotes, e.g. love, life, success" aria-label="Search quotes">
+      <button class="btn" id="submitBtn" aria-label="Search">
+        <ion-icon name="search-circle"></ion-icon>
+      </button>
+    </form>
+  </div>
+
+
+  <section id="today-quote">
+    <h2 class="title">QUOTE OF THE DAY</h2>
+
+    <div class="today-quote-wrapper">
+      <!-- <div class="loading">
+
+        <div class="circle">
+
+        </div>
+      </div> -->
+      <!-- <div class="picture-quote">
+        <div class="frame" style="background-image: url('./images/wallpaper10.jpeg');">
+          <div class="overlay">
+            <h2>Being positive in negative world! <br><cite>Coolblood</cite></h2>
+          </div>
+        </div>
+        <blockquote class="content">
+          <p>Being positive in negative world</p>
+          <cite><a href="#" class="link">Coolblood</a></cite>
+        </blockquote>
+      </div> -->
+
+    </div>
+    <button class="btn" id="randomQuoteBtn">Get Another Quote</button>
+  </section>
+
+  <section id="famous-quote">
+    <h2 class="title">FAMOUS QUOTES</h2>
+
+    <div class="quotes-wrapper">
+      <!-- <div class="picture-quote">
+        <div class="frame" style="background-image: url('./images/wallpaper1.jpeg');">
+          <div class="overlay">
+            <h2>Being positive in negative world! <br><cite>Coolblood</cite></h2>
+          </div>
+        </div>
+        <blockquote class="content">
+          <p>Being positive in negative world</p>
+          <cite><a href="#" class="link">Coolblood</a></cite>
+          <div class="tags">
+            <a href="#" class="link tag-link">Inspiration</a>
+            <a href="#" class="link tag-link">Wisdom</a>
+            <a href="#" class="link tag-link">Positive</a>
+          </div>
+        </blockquote>
+      </div> -->
+
+    </div>
+
+
+
+  </section>
+
+
+
+  <footer>
+    <h4>&copy;ALL RIGHTS RESERVED <span class="year">2023</span></h4>
+  </footer>
+
+  <script src="common.js"></script>
+  <script src="index.js"></script>
+</body>
+
+</html>

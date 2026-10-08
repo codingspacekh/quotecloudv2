@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Authors | Quote Cloud</title>
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+  
+</head>
+
+<body>
+
+  <header>
+
+    <div class="logo">
+      <img src="./logo.png" alt="">
+      <h1>Quote Cloud</h1>
+    </div>
+
+    <nav>
+      <a href="index.html" class="link">HOME</a>
+      <a href="quote.html" class="link">QUOTES</a>
+      <a href="tag.html" class="link">TAGS</a>
+      <a href="author.html" class="link link-active">AUTHORS</a>
+    </nav>
+
+  </header>
+
+  <section id="authors">
+    <form class="search-form page-search" role="search">
+      <input type="search" placeholder="Search quotes, e.g. love, life, success" aria-label="Search quotes">
+      <button class="btn" aria-label="Search">
+        <ion-icon name="search-circle"></ion-icon>
+      </button>
+    </form>
+
+    <h2 class="title">AUTHORS</h2>
+
+    <div class="author-info"></div>
+
+    <div class="author-list"></div>
+
+    <div class="quotes-wrapper"></div>
+
+    <div class="btn-group"></div>
+  </section>
+
+
+
+  <footer>
+    <h4>&copy;ALL RIGHTS RESERVED <span class="year">2023</span></h4>
+  </footer>
+
+  <script src="common.js"></script>
+  <script src="author.js"></script>
+</body>
+
+</html>
