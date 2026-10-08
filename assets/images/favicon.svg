@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- the logo's cloud with quote marks, simplified so it is clear at 16px -->
+  <circle cx="32" cy="32" r="31" fill="#182747"/>
+  <path d="M19 45a9 9 0 0 1-1.5-17.9A12 12 0 0 1 40.5 22a10 10 0 0 1 4.5 19.3V45z" fill="#03C988"/>
+  <path d="M25 31h5v5l-3 5h-3l2-5h-1zM34 31h5v5l-3 5h-3l2-5h-1z" fill="#182747"/>
+</svg>

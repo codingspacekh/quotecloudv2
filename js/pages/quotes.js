@@ -7,7 +7,8 @@ const lengthFilter = document.querySelector('#lengthFilter')
 const params = new URLSearchParams(window.location.search)
 let query = params.get('query')
 let tag = params.get('tag')
-let length = params.get('length') || 'all'
+// a length in the address wins, otherwise use the one chosen last time
+let length = params.get('length') || loadSetting('quoteLength', 'all')
 
 // limit must be 10, 25, 50 or 100 on this API
 let QUOTES_URL = `${API_URL}/quotes?limit=25`
@@ -40,7 +41,7 @@ function displayQuotes(quotes) {
 }
 
 const getQuotes = async () => {
-  quotesWrapper.innerHTML = loadingView
+  quotesWrapper.innerHTML = quoteSkeletons(6)
   btnGroup.innerHTML = ``
   try {
     const data = await fetchJSON(getQuotesURL())
@@ -57,7 +58,7 @@ const getQuotes = async () => {
     btnGroup.innerHTML = createPageButtons(page, lastPage)
   } catch (error) {
     console.log('some error may occur', error.message)
-    showError(quotesWrapper, 'Could not load quotes.', getQuotes)
+    showError(quotesWrapper, 'Could not load quotes.', getQuotes, error)
   }
 }
 
@@ -69,6 +70,7 @@ onPageButtonClick(btnGroup, (newPage) => {
 lengthFilter.addEventListener('change', () => {
   length = lengthFilter.value
   page = 0
+  saveSetting('quoteLength', length)
 
   // keep the choice in the address, so refresh and sharing the link keep it
   const url = new URL(window.location.href)

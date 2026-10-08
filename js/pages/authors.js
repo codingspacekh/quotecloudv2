@@ -128,13 +128,13 @@ const updateAuthorList = () => {
 }
 
 const getAuthors = async () => {
-  listWrapper.innerHTML = loadingView
+  listWrapper.innerHTML = authorSkeletons(12)
   try {
     allAuthors = await getAllAuthors()
     updateAuthorList()
   } catch (error) {
     console.log('some error occurred:', error.message)
-    showError(listWrapper, 'Could not load authors.', getAuthors)
+    showError(listWrapper, 'Could not load authors.', getAuthors, error)
   }
 }
 
@@ -153,6 +153,7 @@ letterBar.addEventListener('click', (e) => {
 })
 
 sortSelect.addEventListener('change', () => {
+  saveSetting('authorSort', sortSelect.value)
   page = 0
   updateAuthorList()
 })
@@ -170,7 +171,7 @@ const displayAuthorInfo = (author) => {
 }
 
 const getAuthor = async () => {
-  quotesWrapper.innerHTML = loadingView
+  quotesWrapper.innerHTML = quoteSkeletons(6)
   try {
     // author details and their quotes can load at the same time
     const [author, quotesData] = await Promise.all([
@@ -191,7 +192,7 @@ const getAuthor = async () => {
       title.textContent = `AUTHOR NOT FOUND`
       quotesWrapper.innerHTML = messageView('We could not find this author. <a href="author.html" class="link">See all authors</a>')
     } else {
-      showError(quotesWrapper, 'Could not load this author.', getAuthor)
+      showError(quotesWrapper, 'Could not load this author.', getAuthor, error)
     }
   }
 }
@@ -199,6 +200,9 @@ const getAuthor = async () => {
 
 function start() {
   authorInput.value = searchTerm
+  // the sort chosen last time ("quotes" or "name")
+  let savedSort = loadSetting('authorSort', 'quotes')
+  sortSelect.value = savedSort === 'name' ? 'name' : 'quotes'
 
   if (slug) {
     // on one author's page, searching goes back to the author list

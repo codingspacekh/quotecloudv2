@@ -87,6 +87,30 @@ img {
   object-position: center;
 }
 
+/* a key on the keyboard, e.g. <kbd>?</kbd> */
+kbd {
+  display: inline-block;
+  min-width: 1.8em;
+  padding: 0 6px;
+  border: 1px solid var(--border);
+  border-bottom-width: 3px;
+  border-radius: 5px;
+  background-color: var(--surface);
+  font-family: inherit;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* hidden on screen, but screen readers still read it */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
 /* hides anything, even elements that set their own display */
 .hide {
   display: none !important;

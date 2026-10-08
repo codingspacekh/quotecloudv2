@@ -17,6 +17,9 @@
   /* text on top of the wallpapers stays the same in both themes */
   --overlay-text: #03C988;
   --focus: #03C988;
+  /* grey shapes shown while content loads */
+  --skeleton: rgba(255,255,255,0.08);
+  --skeleton-shine: rgba(255,255,255,0.16);
 }
 
 :root[data-theme="light"] {
@@ -33,4 +36,6 @@
   --input-bg: #ffffff;
   --overlay-text: #03C988;
   --focus: #046C4E;
+  --skeleton: #E2E8E6;
+  --skeleton-shine: #F2F5F4;
 }

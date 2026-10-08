@@ -1,10 +1,36 @@
-// Small pieces of page content: loading spinner, messages and pop-ups
+// Small pieces of page content: loading placeholders, messages and pop-ups
 
-const loadingView = `
-<div class="loading">
-  <div class="circle"></div>
+// ---------- loading placeholders ("skeletons") ----------
+
+// Grey shapes the size of the real content, shown while it loads,
+// so the page doesn't jump around when the content arrives.
+// Screen readers skip the shapes (aria-hidden) and hear "Loading..." instead.
+
+const repeat = (count, html) => Array.from({ length: count }, () => html).join('')
+
+const loadingText = `<span class="visually-hidden" role="status">Loading...</span>`
+
+const quoteSkeletons = (count) => loadingText + repeat(count, `
+<div class="picture-quote skeleton" aria-hidden="true">
+  <div class="skeleton-frame"></div>
+  <div class="content">
+    <span class="skeleton-line short"></span>
+    <span class="skeleton-line"></span>
+  </div>
 </div>
-`
+`)
+
+const authorSkeletons = (count) => loadingText + repeat(count, `
+<div class="author-card skeleton" aria-hidden="true">
+  <span class="skeleton-line short"></span>
+  <span class="skeleton-line"></span>
+  <span class="skeleton-line tiny"></span>
+</div>
+`)
+
+const tagSkeletons = (count) => loadingText + repeat(count, `
+<span class="tag-card skeleton skeleton-tag" aria-hidden="true"></span>
+`)
 
 // message can contain HTML (e.g. a link), so only pass text you wrote yourself
 const messageView = (message) => `<p class="message">${message}</p>`
@@ -37,12 +63,25 @@ const safeURL = (url) => {
 
 // ---------- errors with a "Try again" button ----------
 
+// explains the error from fetchJSON (see api.js) in plain words
+const getErrorReason = (error) => {
+  if (!navigator.onLine) return 'You are offline. Check your internet connection.'
+  if (!error) return ''
+  if (error.reason === 'timeout') return 'The quotes service is taking too long to answer.'
+  if (error.reason === 'network') return 'Could not reach the quotes service. Check your internet connection.'
+  if (error.status === 429) return 'Too many requests. Wait a few seconds, then try again.'
+  if (error.status >= 500) return 'The quotes service is having problems right now.'
+  return ''
+}
+
 // shows the error inside container, onRetry is the function that loads it again
-const showError = (container, message, onRetry) => {
-  let offline = !navigator.onLine
+const showError = (container, message, onRetry, error) => {
+  let reason = getErrorReason(error)
   container.innerHTML = `
   <div class="message error-message" role="alert">
-    <p>${offline ? 'You are offline. Check your internet connection.' : message}</p>
+    <ion-icon name="cloud-offline-outline" aria-hidden="true"></ion-icon>
+    <p><strong>${message}</strong></p>
+    ${reason ? `<p>${reason}</p>` : ''}
     <button class="btn retry-btn">Try again</button>
   </div>
   `

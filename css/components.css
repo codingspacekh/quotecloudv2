@@ -193,31 +193,61 @@
 
 /* ---------- loading and messages ---------- */
 
-.loading {
-  /* span every column when it sits inside a grid (quotes, authors) */
-  grid-column: 1 / -1;
-  padding: 30px 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 15px;
+/* grey placeholder shapes while content loads (made in js/shared/ui.js) */
+.skeleton {
+  pointer-events: none;
 }
 
-.circle {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  border: 10px solid grey;
-
-  border-top-color: greenyellow;
-  border-bottom-color: yellow;
-
-  animation: loading 750ms infinite;
+.skeleton-frame, .skeleton-line, .skeleton-tag {
+  background: linear-gradient(90deg, var(--skeleton) 25%, var(--skeleton-shine) 50%, var(--skeleton) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
 }
 
-@keyframes loading {
-  50% {
-    transform: rotate(1turn);
+.skeleton-frame {
+  min-height: 225px;
+}
+
+.skeleton-line {
+  display: block;
+  height: 16px;
+  border-radius: 5px;
+}
+
+.skeleton-line.short {
+  width: 45%;
+}
+
+.skeleton-line.tiny {
+  width: 25%;
+}
+
+.skeleton-tag {
+  width: 110px;
+  height: 40px;
+}
+
+.skeleton-tag:nth-child(3n) {
+  width: 80px;
+}
+
+.skeleton-tag:nth-child(4n) {
+  width: 140px;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+
+/* people who turned off animations in their computer settings */
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-frame, .skeleton-line, .skeleton-tag {
+    animation: none;
   }
 }
 
@@ -229,6 +259,10 @@
 
 .error-message p {
   margin-bottom: 10px;
+}
+
+.message.error-message > ion-icon {
+  font-size: 48px;
 }
 
 .message ion-icon {
@@ -264,4 +298,82 @@
   margin-left: 5px;
   border-radius: 10px;
   font-size: 14px;
+}
+
+/* ---------- "back to top" button (made in js/shared/layout.js) ---------- */
+
+.back-to-top {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 98;
+  width: 48px;
+  height: 48px;
+  margin: 0;
+  padding: 0;
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--shadow);
+  display: grid;
+  place-items: center;
+
+  /* hidden until you scroll down; visibility also hides it from the Tab key */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: opacity 200ms, transform 200ms, visibility 200ms;
+}
+
+.back-to-top.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.back-to-top:hover {
+  background-color: var(--surface-active);
+}
+
+.back-to-top ion-icon {
+  font-size: 24px;
+}
+
+/* ---------- keyboard shortcuts ---------- */
+
+.shortcuts-dialog {
+  margin: auto;
+  width: min(90%, 360px);
+  padding: 20px;
+  border: 2px solid var(--border);
+  border-radius: 15px;
+  background-color: var(--bg);
+  box-shadow: 0 0 20px var(--shadow);
+}
+
+.shortcuts-dialog::backdrop {
+  background-color: rgba(0,0,0,0.6);
+}
+
+.shortcuts-dialog h3 {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.shortcuts-dialog dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 10px 15px;
+  margin-bottom: 20px;
+}
+
+.shortcut-hint {
+  margin-top: 5px;
+  font-size: 14px;
+}
+
+/* phones and tablets have no keyboard, so don't mention shortcuts there */
+@media (hover: none) {
+  .shortcut-hint {
+    display: none;
+  }
 }

@@ -35,11 +35,7 @@ const setupThemeToggle = () => {
   toggle.addEventListener('click', () => {
     let newTheme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'
     document.documentElement.dataset.theme = newTheme
-    try {
-      localStorage.setItem('theme', newTheme)
-    } catch (error) {
-      // can't remember it, but the switch still works on this page
-    }
+    saveSetting('theme', newTheme)
     showIcon()
   })
 
@@ -53,6 +49,126 @@ const setFooterYear = () => {
   }
 }
 
+// ---------- "back to top" button ----------
+
+// people who turned off animations in their computer settings get an instant jump
+const scrollBehavior = () => {
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
+}
+
+const setupBackToTop = () => {
+  const button = document.createElement('button')
+  button.className = 'back-to-top'
+  button.setAttribute('aria-label', 'Back to top')
+  button.title = 'Back to top'
+  button.innerHTML = `<ion-icon name="arrow-up-outline"></ion-icon>`
+  document.body.appendChild(button)
+
+  // only show it after scrolling down a bit
+  const update = () => {
+    button.classList.toggle('show', window.scrollY > 600)
+  }
+  // passive: we never stop the scrolling, so the browser can scroll smoothly
+  window.addEventListener('scroll', update, { passive: true })
+  update()
+
+  button.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: scrollBehavior() })
+    // move the keyboard to the top too, so Tab starts from the menu again
+    document.querySelector('header a').focus({ preventScroll: true })
+  })
+}
+
+// ---------- keyboard shortcuts ----------
+
+const SHORTCUTS = [
+  ['/', 'Search'],
+  ['R', 'Random quote (home page)'],
+  ['← →', 'Previous / next page'],
+  ['T', 'Switch theme'],
+  ['?', 'Show this list'],
+]
+
+// opens a small window that lists the shortcuts
+const showShortcuts = () => {
+  let dialog = document.querySelector('.shortcuts-dialog')
+  if (!dialog) {
+    dialog = document.createElement('dialog')
+    dialog.className = 'shortcuts-dialog'
+    dialog.setAttribute('aria-labelledby', 'shortcutsTitle')
+    dialog.innerHTML = `
+    <h3 id="shortcutsTitle">Keyboard shortcuts</h3>
+    <dl>
+      ${SHORTCUTS.map(([keys, action]) => `<dt><kbd>${keys}</kbd></dt><dd>${action}</dd>`).join('')}
+    </dl>
+    <form method="dialog"><button class="btn">Close</button></form>
+    `
+    // clicking the dark area around the window closes it
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) dialog.close()
+    })
+    document.body.appendChild(dialog)
+  }
+  if (!dialog.open) dialog.showModal()
+}
+
+// clicks a button if it is on this page and can be clicked
+const clickButton = (selector) => {
+  const button = document.querySelector(selector)
+  if (!button || button.disabled) return false
+  button.click()
+  return true
+}
+
+const setupShortcuts = () => {
+  document.addEventListener('keydown', (e) => {
+    // leave Ctrl+R, Cmd+F, ... to the browser
+    if (e.ctrlKey || e.metaKey || e.altKey) return
+    // a window like the shortcuts list is open
+    if (document.querySelector('dialog[open]')) return
+
+    // while typing, letters are just letters
+    let typing = e.target.closest('input, select, textarea, [contenteditable]')
+    if (typing) {
+      // Escape leaves the search box
+      if (e.key === 'Escape' && e.target.type === 'search') e.target.blur()
+      return
+    }
+
+    let handled = true
+    if (e.key === '/') {
+      // the first search box on the page
+      const input = document.querySelector('.search-form input')
+      if (input) input.focus()
+    } else if (e.key === 'r' || e.key === 'R') {
+      handled = clickButton('#randomQuoteBtn')
+    } else if (e.key === 'ArrowLeft') {
+      handled = clickButton('.btn-group .prevBtn')
+    } else if (e.key === 'ArrowRight') {
+      handled = clickButton('.btn-group .nextBtn')
+    } else if (e.key === 't' || e.key === 'T') {
+      handled = clickButton('.theme-toggle')
+    } else if (e.key === '?') {
+      showShortcuts()
+    } else {
+      handled = false
+    }
+
+    // stop the browser doing its own thing too (e.g. "/" opens Quick Find in Firefox)
+    if (handled) e.preventDefault()
+  })
+}
+
+// ---------- offline / online ----------
+
+const setupConnectionMessages = () => {
+  window.addEventListener('offline', () => showToast('You are offline'))
+  window.addEventListener('online', () => showToast('Back online'))
+}
+
 setupSearchForms()
 setupThemeToggle()
 setFooterYear()
+setupBackToTop()
+setupShortcuts()
+setupConnectionMessages()

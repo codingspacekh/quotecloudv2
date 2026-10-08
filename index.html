@@ -7,6 +7,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quote Cloud</title>
   <script src="js/theme.js"></script>
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/images/logo.png">
   <link rel="stylesheet" href="css/main.css">
   <script type="module" src="https://unpkg.com/ionicons@7.4.0/dist/ionicons/ionicons.esm.js"></script>
   <script nomodule src="https://unpkg.com/ionicons@7.4.0/dist/ionicons/ionicons.js"></script>
@@ -63,9 +65,11 @@
 
   <footer>
     <h4>&copy;ALL RIGHTS RESERVED <span class="year">2023</span></h4>
+    <p class="shortcut-hint">Press <kbd>?</kbd> for keyboard shortcuts</p>
   </footer>
 
   <!-- shared code first, the page's own script last -->
+  <script src="js/shared/settings.js"></script>
   <script src="js/shared/api.js"></script>
   <script src="js/shared/ui.js"></script>
   <script src="js/shared/favorites-store.js"></script>

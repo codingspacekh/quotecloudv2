@@ -4,7 +4,7 @@ let TAGS_URL = `${API_URL}/tags`
 
 
 const getAllTags = async () => {
-  tagsWrapper.innerHTML = loadingView
+  tagsWrapper.innerHTML = tagSkeletons(20)
   try {
     // returns an array like [{ id, name, quotesCount }]
     const tags = await fetchJSON(TAGS_URL)
@@ -24,7 +24,7 @@ const getAllTags = async () => {
 
   } catch (error) {
     console.log('some error occurred:', error.message)
-    showError(tagsWrapper, 'Could not load tags.', getAllTags)
+    showError(tagsWrapper, 'Could not load tags.', getAllTags, error)
   }
 }
 

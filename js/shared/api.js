@@ -45,15 +45,57 @@ const fixData = (value) => {
   return value
 }
 
-// returns the parsed JSON, or throws when the API answers with an error
-const fetchJSON = async (url) => {
-  const response = await fetch(url)
-  if (!response.ok) {
-    const error = new Error(`Request failed with status ${response.status}`)
-    // e.g. 404 or 422 means "not found", so trying again won't help
-    error.status = response.status
+// ---------- loading data ----------
+
+// stop waiting for an answer after 8 seconds
+const REQUEST_TIMEOUT = 8000
+
+const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms))
+
+// One try. When it fails, the error says why:
+//   error.status = 404, 500, ...    the API answered with an error
+//   error.reason = 'timeout'        the API took too long
+//   error.reason = 'network'        no answer at all (offline, or the API is down)
+const fetchOnce = async (url) => {
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT)
+  try {
+    const response = await fetch(url, { signal: controller.signal })
+    if (!response.ok) {
+      const error = new Error(`Request failed with status ${response.status}`)
+      // e.g. 404 or 422 means "not found", so trying again won't help
+      error.status = response.status
+      throw error
+    }
+    return await response.json()
+  } catch (error) {
+    if (controller.signal.aborted) {
+      error.reason = 'timeout'
+    } else if (error instanceof TypeError) {
+      // fetch throws a TypeError when it gets no answer
+      error.reason = 'network'
+    }
     throw error
+  } finally {
+    clearTimeout(timer)
   }
-  const data = await response.json()
+}
+
+// only try again when waiting a moment could help
+const isWorthRetrying = (error) => {
+  return error.reason === 'timeout' || error.reason === 'network' || error.status >= 500
+}
+
+// returns the parsed JSON, or throws when the API answers with an error
+// (it tries once more by itself after a short problem, e.g. a slow answer)
+const fetchJSON = async (url) => {
+  let data
+  try {
+    data = await fetchOnce(url)
+  } catch (error) {
+    if (!isWorthRetrying(error) || !navigator.onLine) throw error
+    await wait(1000)
+    data = await fetchOnce(url)
+  }
   return fixData(data)
 }

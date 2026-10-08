@@ -20,7 +20,7 @@ const getDayNumber = () => {
 // the day number picks one quote out of the whole list
 const getQuoteOfTheDay = async () => {
   todayQuoteTitle.textContent = `QUOTE OF THE DAY`
-  todayQuoteWapper.innerHTML = loadingView
+  todayQuoteWapper.innerHTML = quoteSkeletons(1)
   try {
     // the first page also tells us how many quotes there are
     let data = await fetchJSON(DAILY_QUOTE_URL + `&page=0`)
@@ -36,7 +36,7 @@ const getQuoteOfTheDay = async () => {
 
   } catch (error) {
     console.log('some error occurred:', error.message)
-    showError(todayQuoteWapper, 'Could not load the quote of the day.', getQuoteOfTheDay)
+    showError(todayQuoteWapper, 'Could not load the quote of the day.', getQuoteOfTheDay, error)
   }
 }
 
@@ -45,7 +45,7 @@ const getRandomQuote = async () => {
   // otherwise an older answer could replace a newer one
   randomBtn.disabled = true
   todayQuoteTitle.textContent = `RANDOM QUOTE`
-  todayQuoteWapper.innerHTML = loadingView
+  todayQuoteWapper.innerHTML = quoteSkeletons(1)
   try {
     const data = await fetchJSON(SINGLE_QUOTE_URL)
 
@@ -55,14 +55,14 @@ const getRandomQuote = async () => {
 
   } catch (error) {
     console.log('some error occurred:', error.message)
-    showError(todayQuoteWapper, 'Could not load a quote.', getRandomQuote)
+    showError(todayQuoteWapper, 'Could not load a quote.', getRandomQuote, error)
   }
   randomBtn.disabled = false
 }
 
 
 const getFamousQuotes = async () => {
-  quotesWrapper.innerHTML = loadingView
+  quotesWrapper.innerHTML = quoteSkeletons(FAMOUS_QUOTE_COUNT)
   try {
     // pages start at 0, there are about 80 pages of famous quotes
     let page = Math.floor(Math.random() * 80)
@@ -79,7 +79,7 @@ const getFamousQuotes = async () => {
 
   } catch (error) {
     console.log('some error occurred:', error.message)
-    showError(quotesWrapper, 'Could not load famous quotes.', getFamousQuotes)
+    showError(quotesWrapper, 'Could not load famous quotes.', getFamousQuotes, error)
   }
 }
 
