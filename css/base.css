@@ -11,6 +11,12 @@
 body {
   background-color: var(--bg);
   color: var(--text);
+
+  /* at least as tall as the screen, so the footer can sit at the bottom
+     even when the page has little content (see footer in layout.css) */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 a {

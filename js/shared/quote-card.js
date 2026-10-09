@@ -151,10 +151,21 @@ document.addEventListener('click', async (e) => {
   const quote = shownQuotes[card.dataset.id]
 
   if (btn.dataset.action === 'favorite') {
-    // removing a favorite also removes your note and collections, so ask first
+    // ask first when removing a favorite loses something: your note and collections,
+    // or the card itself on the favorites page (it disappears from the list)
     let saved = getFavorite(quote.id)
-    if (saved && (saved.note || getQuoteCollections(saved).length > 0)) {
-      if (!confirm('Remove this quote from your favorites? Your note and collections for it will be deleted too.')) return
+    let hasExtras = saved && (saved.note || getQuoteCollections(saved).length > 0)
+    let onFavoritesPage = document.querySelector('#favorites') !== null
+    if (saved && (hasExtras || onFavoritesPage)) {
+      let remove = await askToConfirm({
+        title: 'Remove from favorites?',
+        text: hasExtras
+          ? 'Your note and collections for this quote will be deleted too.'
+          : 'You can save it again later from any quote list.',
+        quote,
+        confirmLabel: 'Remove',
+      })
+      if (!remove) return
     }
     let favorite = toggleFavorite(quote)
     // the same quote can be on the page twice (e.g. quote of the day + famous quotes)

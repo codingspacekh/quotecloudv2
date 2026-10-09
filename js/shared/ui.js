@@ -122,3 +122,68 @@ const showToast = (message) => {
   clearTimeout(toastTimer)
   toastTimer = setTimeout(() => toast.classList.remove('show'), 2000)
 }
+
+
+// ---------- "Are you sure?" window ----------
+
+// A nicer replacement for confirm(). It gives back a Promise:
+// true when "Delete" is clicked, false for Cancel, Escape or a click outside.
+//   if (!await askToConfirm({ title: 'Delete?', text: '...' })) return
+let confirmDialog = null
+
+const createConfirmDialog = () => {
+  const dialog = document.createElement('dialog')
+  dialog.className = 'dialog form-dialog confirm-dialog'
+  dialog.setAttribute('aria-labelledby', 'confirmDialogTitle')
+  dialog.setAttribute('aria-describedby', 'confirmDialogText')
+  dialog.innerHTML = `
+  <h3 id="confirmDialogTitle"></h3>
+  <blockquote class="dialog-quote"></blockquote>
+  <p class="dialog-hint" id="confirmDialogText"></p>
+  <div class="dialog-buttons">
+    <button type="button" class="btn cancel-btn">Cancel</button>
+    <button type="button" class="btn danger-btn confirm-btn">
+      <ion-icon name="trash-outline" aria-hidden="true"></ion-icon> <span class="confirm-label"></span>
+    </button>
+  </div>
+  `
+
+  // returnValue tells askToConfirm which button closed the window
+  dialog.querySelector('.cancel-btn').addEventListener('click', () => dialog.close('cancel'))
+  dialog.querySelector('.confirm-btn').addEventListener('click', () => dialog.close('confirm'))
+
+  // clicking the dark area around the window closes it
+  dialog.addEventListener('click', (e) => {
+    if (e.target === dialog) dialog.close('cancel')
+  })
+
+  document.body.appendChild(dialog)
+  return dialog
+}
+
+// quote is optional: when given, it's shown so you know what you are deleting
+const askToConfirm = ({ title, text, quote = null, confirmLabel = 'Delete' }) => {
+  if (!confirmDialog) {
+    confirmDialog = createConfirmDialog()
+  }
+
+  confirmDialog.querySelector('#confirmDialogTitle').textContent = title
+  confirmDialog.querySelector('#confirmDialogText').textContent = text
+  confirmDialog.querySelector('.confirm-label').textContent = confirmLabel
+
+  const quoteBox = confirmDialog.querySelector('.dialog-quote')
+  quoteBox.textContent = quote ? `“${quote.content}” — ${quote.author.name}` : ''
+  quoteBox.classList.toggle('hide', !quote)
+
+  // Escape also closes the window, with returnValue left as ''
+  confirmDialog.returnValue = ''
+  confirmDialog.showModal()
+  // start on the safe choice: Enter or Space doesn't delete anything
+  confirmDialog.querySelector('.cancel-btn').focus()
+
+  return new Promise(resolve => {
+    confirmDialog.addEventListener('close', () => {
+      resolve(confirmDialog.returnValue === 'confirm')
+    }, { once: true })
+  })
+}

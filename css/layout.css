@@ -71,6 +71,8 @@ header nav {
 }
 
 footer {
+  /* takes all the empty space above it, so it's pushed to the bottom of the screen */
+  margin-top: auto;
   text-align: center;
   padding: 15px;
   background-color: var(--footer-bg);

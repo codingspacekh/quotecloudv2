@@ -307,7 +307,7 @@ collectionBar.addEventListener('click', (e) => {
   collectionBar.querySelector('.btn-active').focus()
 })
 
-collectionActions.addEventListener('click', (e) => {
+collectionActions.addEventListener('click', async (e) => {
   const btn = e.target.closest('button')
   if (!btn) return
 
@@ -317,7 +317,11 @@ collectionActions.addEventListener('click', (e) => {
 
   if (btn.classList.contains('delete-collection-btn')) {
     const collection = getCollections().find(c => c.id === currentCollection)
-    if (!confirm(`Delete the collection "${collection.name}"? The quotes stay in your favorites.`)) return
+    let remove = await askToConfirm({
+      title: `Delete "${collection.name}"?`,
+      text: 'The quotes stay in your favorites.',
+    })
+    if (!remove) return
 
     deleteCollection(collection.id)
     setCurrentCollection(ALL)
