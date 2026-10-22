@@ -88,6 +88,7 @@ const createQuoteCard = (quote, imgIndex = Math.floor(Math.random() * WALLPAPER_
         ${showTools ? getFavoriteButtons(quote) : ''}
         ${actionButton('copy', 'copy-outline', 'Copy quote')}
         ${actionButton('download', 'download-outline', 'Download as image')}
+        ${actionButton('facebook', 'logo-facebook', 'Share on Facebook')}
       </div>
     </div>
   </div>
@@ -104,6 +105,12 @@ const focusCardAt = (wrapper, position, action) => {
   if (!card) return false
   card.querySelector(`[data-action="${action}"]`).focus()
   return true
+}
+
+const getFacebookShareURL = (quote) => {
+  let page = quote.author.slug ? `author.html?slug=${encodeURIComponent(quote.author.slug)}` : 'index.html'
+  let link = new URL(page, window.location.href).href
+  return `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(link)}`
 }
 
 const copyText = async (text) => {
@@ -169,5 +176,15 @@ document.addEventListener('click', async (e) => {
 
   if (btn.dataset.action === 'download') {
     openImageDialog(quote, parseInt(card.dataset.wallpaper))
+  }
+
+  if (btn.dataset.action === 'facebook') {
+    try {
+      await copyText(formatQuote(quote))
+      showToast('Quote copied, paste it into your Facebook post')
+    } catch (error) {
+      showToast('Write the quote in your Facebook post')
+    }
+    window.open(getFacebookShareURL(quote), '_blank', 'noopener')
   }
 })
