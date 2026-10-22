@@ -1,7 +1,3 @@
-// Page buttons used on the quotes and authors pages
-
-// Page buttons like:  ←  1 … 4 5 [6] 7 8 … 85  →
-// page and lastPage start at 0, each button keeps its page in data-page
 const createPageButtons = (page, lastPage) => {
   if (lastPage <= 0) return ''
 
@@ -26,7 +22,6 @@ const createPageButtons = (page, lastPage) => {
   return btns.join('')
 }
 
-// calls onChange(newPage) when one of the page buttons is clicked
 const onPageButtonClick = (btnGroup, onChange) => {
   btnGroup.addEventListener('click', (e) => {
     let btn = e.target.closest('button')

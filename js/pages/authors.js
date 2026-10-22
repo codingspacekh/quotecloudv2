@@ -13,7 +13,6 @@ const resultCount = document.querySelector('.result-count')
 const params = new URLSearchParams(window.location.search)
 let slug = params.get('slug')
 
-// limit must be 10, 25, 50 or 100 on this API
 const AUTHORS_URL = `${API_URL}/authors?limit=100`
 const AUTHOR_URL = `${API_URL}/authors/slug/`
 const AUTHOR_QUOTES_URL = `${API_URL}/quotes?limit=100&author=`
@@ -26,18 +25,11 @@ let searchTerm = params.get('name') || ''
 let letter = 'All'
 let page = 0
 
-
-// ---------- author.html (list of all authors) ----------
-
-// The API can't search authors, so we load all of them once (about 800)
-// and search, filter and sort them here in the browser.
-// sessionStorage keeps them while the tab is open, so going back is instant.
 const getAllAuthors = async () => {
   try {
     let saved = JSON.parse(sessionStorage.getItem('authors'))
     if (saved) return saved
   } catch (error) {
-    // nothing saved, load them below
   }
 
   const firstPage = await fetchJSON(AUTHORS_URL + `&page=0`)
@@ -45,7 +37,6 @@ const getAllAuthors = async () => {
   for (let i = 1; i <= firstPage.metadata.lastPage; i++) {
     pageNumbers.push(i)
   }
-  // load the other pages at the same time
   const otherPages = await Promise.all(pageNumbers.map(i => fetchJSON(AUTHORS_URL + `&page=${i}`)))
 
   let authors = [firstPage, ...otherPages]
@@ -60,19 +51,15 @@ const getAllAuthors = async () => {
   try {
     sessionStorage.setItem('authors', JSON.stringify(authors))
   } catch (error) {
-    // too big or blocked, it will just load again next time
   }
   return authors
 }
 
-// "Émile Zola" -> "E", "14th Dalai Lama" -> "#"
 const getFirstLetter = (name) => {
   let first = name.normalize('NFD').charAt(0).toUpperCase()
   return first >= 'A' && first <= 'Z' ? first : '#'
 }
 
-// "Émile" matches "emile" too: NFD splits "É" into "E" + an accent mark,
-// and \u0300-\u036f are the accent marks, which are then removed
 const simplify = (text) => text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
 
 const getFilteredAuthors = () => {
@@ -159,9 +146,6 @@ sortSelect.addEventListener('change', () => {
   updateAuthorList()
 })
 
-
-// ---------- author.html?slug=... (one author and their quotes) ----------
-
 const displayAuthorInfo = (author) => {
   authorInfo.innerHTML = `
   <h3>${escapeHTML(author.name)}</h3>
@@ -174,7 +158,6 @@ const displayAuthorInfo = (author) => {
 const getAuthor = async () => {
   quotesWrapper.innerHTML = quoteSkeletons(6)
   try {
-    // author details and their quotes can load at the same time
     const [author, quotesData] = await Promise.all([
       fetchJSON(AUTHOR_URL + encodeURIComponent(slug)),
       fetchJSON(AUTHOR_QUOTES_URL + encodeURIComponent(slug)),
@@ -193,7 +176,6 @@ const getAuthor = async () => {
   } catch (error) {
     console.error('Could not load this author:', error)
     if (error.status === 404 || error.status === 422) {
-      // the API says this author doesn't exist, trying again won't help
       title.textContent = `AUTHOR NOT FOUND`
       quotesWrapper.innerHTML = messageView('We could not find this author. <a href="author.html" class="link">See all authors</a>')
     } else {
@@ -202,15 +184,12 @@ const getAuthor = async () => {
   }
 }
 
-
 const start = () => {
   authorInput.value = searchTerm
-  // the sort chosen last time ("quotes" or "name")
   let savedSort = loadSetting('authorSort', 'quotes')
   sortSelect.value = savedSort === 'name' ? 'name' : 'quotes'
 
   if (slug) {
-    // on one author's page, searching goes back to the author list
     filters.classList.add('hide')
     resultCount.classList.add('hide')
     authorSearch.addEventListener('submit', (e) => {
@@ -220,12 +199,10 @@ const start = () => {
     getAuthor()
   } else {
     title.textContent = `AUTHORS`
-    // the list updates while you type
     authorSearch.addEventListener('submit', (e) => e.preventDefault())
     authorInput.addEventListener('input', () => {
       searchTerm = authorInput.value
       page = 0
-      // still loading: the list uses searchTerm when it's ready
       if (allAuthors.length === 0) return
       updateAuthorList()
     })

@@ -1,17 +1,9 @@
-// The "Download as image" window: choose the size, text size and background,
-// see a preview, then download.
-// needs: settings.js, ui.js, quote-image.js (drawing), quote-card.js (wallpapers)
-
 const PLAIN_BACKGROUND = 'plain'
 
-// there is only one window, it is made the first time it's needed
 let imageDialog = null
-// the quote the window is showing
 let imageQuote = null
-// goes up on every preview, so an older (slower) preview can't draw over a newer one
 let previewNumber = 0
 
-// one radio button for each choice in IMAGE_SIZES or TEXT_SIZES
 const radioChoices = (name, choices) => {
   return Object.entries(choices).map(([value, choice]) => `
   <label class="choice">
@@ -21,7 +13,6 @@ const radioChoices = (name, choices) => {
   `).join('')
 }
 
-// one small picture for each wallpaper, plus a plain color
 const backgroundChoices = () => {
   let choices = ''
   for (let i = 0; i < WALLPAPER_COUNT; i++) {
@@ -80,7 +71,6 @@ const createImageDialog = () => {
 
   const form = dialog.querySelector('form')
 
-  // any choice changed: draw the preview again
   form.addEventListener('change', updatePreview)
 
   form.addEventListener('submit', (e) => {
@@ -95,7 +85,6 @@ const createImageDialog = () => {
   return dialog
 }
 
-// what is picked in the form right now, ready for drawQuote (see quote-image.js)
 const getImageOptions = async () => {
   const fields = imageDialog.querySelector('form').elements
   let background = fields.background.value
@@ -111,7 +100,6 @@ const updatePreview = async () => {
   await loadFonts()
   const options = await getImageOptions()
 
-  // another choice was made while the picture was loading, that one draws instead
   if (thisPreview !== previewNumber) return
 
   drawQuote(imageDialog.querySelector('canvas'), imageQuote, options)
@@ -124,7 +112,6 @@ const downloadImage = async () => {
     const options = await getImageOptions()
     let withPicture = await downloadQuoteImage(imageQuote, options)
 
-    // use the same size and text size next time
     saveSetting('imageSize', options.size)
     saveSetting('imageTextSize', options.textSize)
 
@@ -137,7 +124,6 @@ const downloadImage = async () => {
   button.disabled = false
 }
 
-// opens the window for this quote, starting with the picture its card uses
 const openImageDialog = (quote, wallpaperIndex) => {
   if (!imageDialog) {
     imageDialog = createImageDialog()
@@ -147,7 +133,6 @@ const openImageDialog = (quote, wallpaperIndex) => {
   const fields = imageDialog.querySelector('form').elements
   let size = loadSetting('imageSize', 'square')
   let textSize = loadSetting('imageTextSize', 'medium')
-  // a saved value could be old or changed by hand, so check it still exists
   fields.size.value = IMAGE_SIZES[size] ? size : 'square'
   fields.textSize.value = TEXT_SIZES[textSize] ? textSize : 'medium'
   fields.background.value = String(wallpaperIndex)

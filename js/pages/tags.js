@@ -2,14 +2,11 @@ const tagsWrapper = document.querySelector('.tag-list')
 
 const TAGS_URL = `${API_URL}/tags`
 
-
 const getAllTags = async () => {
   tagsWrapper.innerHTML = tagSkeletons(20)
   try {
-    // returns an array like [{ id, name, quotesCount }]
     const tags = await fetchJSON(TAGS_URL)
 
-    // most used tags first, and hide tags without quotes
     let sortedTags = tags
       .filter(tag => tag.quotesCount > 0)
       .sort((a, b) => b.quotesCount - a.quotesCount)
@@ -21,7 +18,6 @@ const getAllTags = async () => {
       </a>
       `
     }).join('')
-
   } catch (error) {
     console.error('Could not load tags:', error)
     showError(tagsWrapper, 'Could not load tags.', getAllTags, error)

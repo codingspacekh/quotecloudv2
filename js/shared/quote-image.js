@@ -1,14 +1,9 @@
-// "Download as image": draws a quote on a <canvas> and saves it as a PNG
-// (the window where you choose the options is in image-dialog.js)
-
-// the image sizes you can choose, in pixels
 const IMAGE_SIZES = {
   square: { label: 'Square', hint: 'Posts', width: 1080, height: 1080 },
   story: { label: 'Story', hint: 'Phone stories', width: 1080, height: 1920 },
   wide: { label: 'Wide', hint: 'X, slides', width: 1920, height: 1080 },
 }
 
-// how big the text is, compared to "Medium"
 const TEXT_SIZES = {
   small: { label: 'Small', scale: 0.8 },
   medium: { label: 'Medium', scale: 1 },
@@ -24,14 +19,11 @@ const loadImage = (src) => {
   })
 }
 
-// pictures that were loaded once, so switching backgrounds in the preview is instant
 const wallpaperCache = {}
 
-// returns the picture, or null when it could not be loaded
 const loadWallpaper = (index) => {
   if (!wallpaperCache[index]) {
     wallpaperCache[index] = loadImage(getWallpaper(index)).catch(() => {
-      // try again next time
       delete wallpaperCache[index]
       return null
     })
@@ -39,17 +31,14 @@ const loadWallpaper = (index) => {
   return wallpaperCache[index]
 }
 
-// wait for the web font, otherwise the canvas uses a default font
 const loadFonts = async () => {
   try {
     await document.fonts.load('700 48px "Titillium Web"')
     await document.fonts.load('italic 600 40px "Titillium Web"')
   } catch (error) {
-    // the default font is fine too
   }
 }
 
-// splits the text into lines that fit inside maxWidth
 const wrapText = (ctx, text, maxWidth) => {
   let words = text.split(' ')
   let lines = []
@@ -67,21 +56,15 @@ const wrapText = (ctx, text, maxWidth) => {
   return lines
 }
 
-// options: { size, textSize, wallpaper }
-//   size      'square', 'story' or 'wide' (see IMAGE_SIZES)
-//   textSize  'small', 'medium' or 'large' (see TEXT_SIZES)
-//   wallpaper a loaded picture, or null for a plain color
 const drawQuote = (canvas, quote, options) => {
   const { width, height } = IMAGE_SIZES[options.size]
   const scale = TEXT_SIZES[options.textSize].scale
   const wallpaper = options.wallpaper
 
-  // changing the size also clears the canvas
   canvas.width = width
   canvas.height = height
   const ctx = canvas.getContext('2d')
 
-  // background: the wallpaper cropped to fill the image, or a plain color
   if (wallpaper) {
     let zoom = Math.max(width / wallpaper.width, height / wallpaper.height)
     let picWidth = wallpaper.width * zoom
@@ -94,8 +77,6 @@ const drawQuote = (canvas, quote, options) => {
   ctx.fillStyle = 'rgba(0, 0, 0, 0.6)'
   ctx.fillRect(0, 0, width, height)
 
-  // make the font smaller until the quote fits
-  // (so a big text size only stays big when the quote is short enough)
   let padding = width * 0.1
   let fontSize = Math.round(68 * scale)
   let lines = []
@@ -130,7 +111,6 @@ const drawQuote = (canvas, quote, options) => {
 
 const canvasToBlob = (canvas) => {
   return new Promise((resolve, reject) => {
-    // throws if the wallpaper "taints" the canvas (when the page is opened as file://)
     try {
       canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('Empty image')), 'image/png')
     } catch (error) {
@@ -139,8 +119,6 @@ const canvasToBlob = (canvas) => {
   })
 }
 
-// draws the image and saves it, options are the same as for drawQuote.
-// returns false when the picture had to be left out (see below)
 const downloadQuoteImage = async (quote, options) => {
   await loadFonts()
   const canvas = document.createElement('canvas')
@@ -151,7 +129,6 @@ const downloadQuoteImage = async (quote, options) => {
   try {
     blob = await canvasToBlob(canvas)
   } catch (error) {
-    // browsers block reading pictures from file:// pages, so draw it again without the picture
     drawQuote(canvas, quote, { ...options, wallpaper: null })
     blob = await canvasToBlob(canvas)
     withPicture = false

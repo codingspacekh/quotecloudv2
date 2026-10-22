@@ -1,5 +1,3 @@
-/* Header, banner and footer (the same on every page) */
-
 .logo {
   display: flex;
   align-items: center;
@@ -38,7 +36,6 @@ header nav {
   gap: 10px;
 }
 
-/* the heart link and the theme button in the header */
 .nav-icon {
   display: flex;
   align-items: center;
@@ -71,9 +68,7 @@ header nav {
 }
 
 footer {
-  /* takes all the empty space above it, so it's pushed to the bottom of the screen */
   margin-top: auto;
-  /* stays at the bottom of the screen while you scroll, like the header at the top */
   position: sticky;
   bottom: 0;
   z-index: 97;
@@ -86,9 +81,6 @@ footer .copyright {
   font-weight: 700;
 }
 
-/* shown under the header while there is no internet (made in js/shared/layout.js).
-   It pushes the page down, so it never covers anything
-   (on the home page it sits on top of the big picture) */
 .offline-banner {
   position: relative;
   z-index: 98;

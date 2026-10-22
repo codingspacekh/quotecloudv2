@@ -1,11 +1,3 @@
-// Small pieces of page content: loading placeholders, messages and pop-ups
-
-// ---------- loading placeholders ("skeletons") ----------
-
-// Grey shapes the size of the real content, shown while it loads,
-// so the page doesn't jump around when the content arrives.
-// Screen readers skip the shapes (aria-hidden) and hear "Loading..." instead.
-
 const repeat = (count, html) => Array.from({ length: count }, () => html).join('')
 
 const loadingText = `<span class="visually-hidden" role="status">Loading...</span>`
@@ -32,23 +24,14 @@ const tagSkeletons = (count) => loadingText + repeat(count, `
 <span class="tag-card skeleton skeleton-tag" aria-hidden="true"></span>
 `)
 
-// message can contain HTML (e.g. a link), so only pass text you wrote yourself
 const messageView = (message) => `<p class="message">${message}</p>`
 
-// “The quote” — Author, as plain text (for copying, and at the top of pop-up windows)
 const formatQuote = (quote) => `“${quote.content}” — ${quote.author.name}`
 
-// people who turned off animations in their computer settings get an instant jump
 const scrollBehavior = () => {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
 }
 
-
-// ---------- safe HTML ----------
-
-// Text from the API (or from localStorage) must go through escapeHTML before
-// it is put inside innerHTML. Otherwise a quote like  <img src=x onerror="...">
-// would become a real element and could run code on our page.
 const escapeHTML = (text) => {
   return String(text)
     .replace(/&/g, '&amp;')
@@ -58,7 +41,6 @@ const escapeHTML = (text) => {
     .replace(/'/g, '&#39;')
 }
 
-// only allow normal web links in href, never "javascript:..."
 const safeURL = (url) => {
   try {
     let parsed = new URL(url)
@@ -68,10 +50,6 @@ const safeURL = (url) => {
   }
 }
 
-
-// ---------- errors with a "Try again" button ----------
-
-// explains the error from fetchJSON (see api.js) in plain words
 const getErrorReason = (error) => {
   if (!navigator.onLine) return 'You are offline. Check your internet connection.'
   if (!error) return ''
@@ -82,7 +60,6 @@ const getErrorReason = (error) => {
   return ''
 }
 
-// shows the error inside container, onRetry is the function that loads it again
 const showError = (container, message, onRetry, error) => {
   let reason = getErrorReason(error)
   container.innerHTML = `
@@ -97,25 +74,17 @@ const showError = (container, message, onRetry, error) => {
   const errorBox = container.querySelector('.error-message')
   const retry = () => {
     window.removeEventListener('online', retry)
-    // something else was shown here in the meantime (or a newer error), so leave it
     if (!errorBox.isConnected) return
     onRetry()
   }
   container.querySelector('.retry-btn').addEventListener('click', retry)
-  // load it again by itself when the internet comes back
   window.addEventListener('online', retry)
 }
 
-// ---------- form errors ----------
-
-// shows the message under a form field, or clears it when message is ''
-// aria-invalid tells screen readers the field has a problem
 const setFieldError = (field, errorElement, message) => {
   errorElement.textContent = message
   field.setAttribute('aria-invalid', message ? 'true' : 'false')
 }
-
-// ---------- small pop-up message ----------
 
 let toastTimer = null
 
@@ -134,23 +103,12 @@ const showToast = (message) => {
   toastTimer = setTimeout(() => toast.classList.remove('show'), 2000)
 }
 
-
-// ---------- pop-up windows (<dialog>) ----------
-
-// clicking the dark area around the window closes it
-// (returnValue is left as it was, like pressing Escape)
 const closeOnBackdropClick = (dialog) => {
   dialog.addEventListener('click', (e) => {
     if (e.target === dialog) dialog.close()
   })
 }
 
-
-// ---------- "Are you sure?" window ----------
-
-// A nicer replacement for confirm(). It gives back a Promise:
-// true when "Delete" is clicked, false for Cancel, Escape or a click outside.
-//   if (!await askToConfirm({ title: 'Delete?', text: '...' })) return
 let confirmDialog = null
 
 const createConfirmDialog = () => {
@@ -170,7 +128,6 @@ const createConfirmDialog = () => {
   </div>
   `
 
-  // returnValue tells askToConfirm which button closed the window
   dialog.querySelector('.cancel-btn').addEventListener('click', () => dialog.close('cancel'))
   dialog.querySelector('.confirm-btn').addEventListener('click', () => dialog.close('confirm'))
   closeOnBackdropClick(dialog)
@@ -179,7 +136,6 @@ const createConfirmDialog = () => {
   return dialog
 }
 
-// quote is optional: when given, it's shown so you know what you are deleting
 const askToConfirm = ({ title, text, quote = null, confirmLabel = 'Delete' }) => {
   if (!confirmDialog) {
     confirmDialog = createConfirmDialog()
@@ -193,10 +149,8 @@ const askToConfirm = ({ title, text, quote = null, confirmLabel = 'Delete' }) =>
   quoteBox.textContent = quote ? formatQuote(quote) : ''
   quoteBox.classList.toggle('hide', !quote)
 
-  // Escape also closes the window, with returnValue left as ''
   confirmDialog.returnValue = ''
   confirmDialog.showModal()
-  // start on the safe choice: Enter or Space doesn't delete anything
   confirmDialog.querySelector('.cancel-btn').focus()
 
   return new Promise(resolve => {

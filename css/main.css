@@ -1,5 +1,3 @@
-
-/* The only stylesheet the pages load. The order matters: later files win. */
 @import url('variables.css');
 @import url('base.css');
 @import url('layout.css');

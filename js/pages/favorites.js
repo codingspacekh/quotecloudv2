@@ -22,12 +22,8 @@ const NOTE_MAX = 200
 const ALL = 'all'
 
 const params = new URLSearchParams(window.location.search)
-// the collection being shown: 'all' or a collection id
-// (it's kept in the address, so refreshing the page keeps it)
 let currentCollection = params.get('collection') || ALL
-// the quote whose note or collections window is open
 let dialogQuoteId = null
-// the collection being renamed, or null when making a new one
 let renamingId = null
 
 const emptyMessage = messageView(
@@ -43,9 +39,6 @@ const updateTitle = () => {
   let count = getFavorites().length
   title.textContent = count ? `MY FAVORITES (${count})` : `MY FAVORITES`
 }
-
-
-// ---------- the collection buttons above the quotes ----------
 
 const setCurrentCollection = (collectionId) => {
   currentCollection = collectionId
@@ -70,12 +63,10 @@ const displayCollectionBar = () => {
   let favorites = getFavorites()
   let collections = getCollections()
 
-  // the collection in the address doesn't exist (any more)
   if (currentCollection !== ALL && !collections.some(collection => collection.id === currentCollection)) {
     setCurrentCollection(ALL)
   }
 
-  // nothing saved yet, the empty message says what to do
   if (favorites.length === 0 && collections.length === 0) {
     collectionBar.innerHTML = ''
     collectionActions.innerHTML = ''
@@ -95,11 +86,7 @@ const displayCollectionBar = () => {
   `
 }
 
-
-// ---------- the quotes ----------
-
 const displayFavorites = () => {
-  // favorites are saved in this browser, so no API call is needed
   updateTitle()
   displayCollectionBar()
 
@@ -121,20 +108,16 @@ const displayFavorites = () => {
   quotesWrapper.innerHTML = favorites.map((quote, i) => createQuoteCard(quote, i, { favoriteTools: true })).join('')
 }
 
-// draws one card again after its note or collections changed (it keeps its picture),
-// then puts the keyboard back on the button that was used
 const refreshCard = (quoteId, action) => {
   displayCollectionBar()
   const card = findCard(quoteId)
   if (!card) return
 
   const quote = getFavorite(quoteId)
-  // it's not in the collection being shown any more
   if (!quote || (currentCollection !== ALL && !isInCollection(quote, currentCollection))) {
     let position = getCardPosition(quotesWrapper, quoteId)
     card.remove()
     if (!quotesWrapper.querySelector('.picture-quote')) displayFavorites()
-    // the button that was used is gone, so go to the collection being shown
     if (!focusCardAt(quotesWrapper, position, action)) focusCurrentCollection()
     return
   }
@@ -143,13 +126,9 @@ const refreshCard = (quoteId, action) => {
   findCard(quoteId).querySelector(`[data-action="${action}"]`).focus()
 }
 
-// the quote at the top of a window, so you know which one you are changing
 const showDialogQuote = (dialog, quote) => {
   dialog.querySelector('.dialog-quote').textContent = formatQuote(quote)
 }
-
-
-// ---------- your note ----------
 
 const updateNoteCount = () => {
   noteCount.textContent = `${noteText.value.length} / ${NOTE_MAX}`
@@ -186,9 +165,6 @@ noteDialog.querySelector('.delete-note-btn').addEventListener('click', () => sav
 noteDialog.querySelector('.cancel-btn').addEventListener('click', () => noteDialog.close())
 closeOnBackdropClick(noteDialog)
 
-
-// ---------- putting a quote in collections ----------
-
 const displayCollectionCheckboxes = () => {
   const quote = getFavorite(dialogQuoteId)
   let collections = getCollections()
@@ -218,12 +194,10 @@ const openCollectionsDialog = (quoteId) => {
   collectionsDialog.showModal()
 }
 
-// every tick is saved straight away
 collectionCheckboxes.addEventListener('change', (e) => {
   setInCollection(dialogQuoteId, e.target.value, e.target.checked)
 })
 
-// make a new collection and put the quote in it
 newCollectionForm.addEventListener('submit', (e) => {
   e.preventDefault()
   let name = newCollectionName.value.trim()
@@ -246,11 +220,7 @@ newCollectionName.addEventListener('input', () => setFieldError(newCollectionNam
 collectionsDialog.querySelector('.done-btn').addEventListener('click', () => collectionsDialog.close())
 closeOnBackdropClick(collectionsDialog)
 
-// closed with Done or Escape: show the changes on the card
 collectionsDialog.addEventListener('close', () => refreshCard(dialogQuoteId, 'collections'))
-
-
-// ---------- making and renaming collections ----------
 
 const openCollectionNameDialog = (collectionId = null) => {
   renamingId = collectionId
@@ -276,7 +246,6 @@ collectionNameDialog.querySelector('form').addEventListener('submit', (e) => {
     renameCollection(renamingId, name)
     showToast('Collection renamed')
   } else {
-    // show the new (empty) collection straight away
     setCurrentCollection(createCollection(name).id)
     showToast(`Collection "${name}" created`)
   }
@@ -288,9 +257,6 @@ collectionNameDialog.querySelector('form').addEventListener('submit', (e) => {
 collectionName.addEventListener('input', () => setFieldError(collectionName, collectionNameError, ''))
 collectionNameDialog.querySelector('.cancel-btn').addEventListener('click', () => collectionNameDialog.close())
 closeOnBackdropClick(collectionNameDialog)
-
-
-// ---------- clicks ----------
 
 collectionBar.addEventListener('click', (e) => {
   const btn = e.target.closest('button')
@@ -330,7 +296,6 @@ collectionActions.addEventListener('click', async (e) => {
   }
 })
 
-// the note and folder buttons on the cards (quote-card.js handles the others)
 quotesWrapper.addEventListener('click', (e) => {
   const btn = e.target.closest('[data-action="note"], [data-action="collections"]')
   if (!btn) return
@@ -343,7 +308,6 @@ quotesWrapper.addEventListener('click', (e) => {
   }
 })
 
-// when a heart is clicked on this page, take the card away
 document.addEventListener('favorites-changed', (e) => {
   if (e.detail.favorite) return
 

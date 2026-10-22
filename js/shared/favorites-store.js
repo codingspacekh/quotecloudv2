@@ -1,5 +1,3 @@
-// Favorite quotes, with your notes and collections, saved in this browser with localStorage
-
 const FAVORITES_KEY = 'favoriteQuotes'
 
 const getFavorites = () => loadJSON(FAVORITES_KEY, [])
@@ -14,14 +12,12 @@ const isFavorite = (quoteId) => {
   return getFavorites().some(quote => quote.id === quoteId)
 }
 
-// adds or removes the quote, returns true when it is now a favorite
 const toggleFavorite = (quote) => {
   let favorites = getFavorites()
   if (favorites.some(fav => fav.id === quote.id)) {
     saveFavorites(favorites.filter(fav => fav.id !== quote.id))
     return false
   }
-  // newest favorites first, only keep what a card needs
   favorites.unshift({
     id: quote.id,
     content: quote.content,
@@ -36,8 +32,6 @@ const getFavorite = (quoteId) => {
   return getFavorites().find(quote => quote.id === quoteId)
 }
 
-// changes some fields of one favorite, e.g. updateFavorite(id, { note: 'Nice!' })
-// returns the changed favorite
 const updateFavorite = (quoteId, changes) => {
   let updated = null
   let favorites = getFavorites().map(quote => {
@@ -48,13 +42,6 @@ const updateFavorite = (quoteId, changes) => {
   saveFavorites(favorites)
   return updated
 }
-
-
-// ---------- collections ----------
-
-// A collection is a named group of favorites, like { id: 'c-1696800000000', name: 'Motivation' }.
-// Each favorite keeps the ids of its collections: favorite.collections = ['c-1696800000000', ...]
-// so removing a favorite also takes it out of its collections.
 
 const COLLECTIONS_KEY = 'quoteCollections'
 const COLLECTION_NAME_MAX = 30
@@ -67,13 +54,10 @@ const saveCollections = (collections) => {
   }
 }
 
-// the collections a favorite is in (old favorites have none yet)
 const getQuoteCollections = (quote) => quote.collections || []
 
 const isInCollection = (quote, collectionId) => getQuoteCollections(quote).includes(collectionId)
 
-// returns an error message, or '' when the name is fine.
-// ignoreId: the collection being renamed (it may keep its own name)
 const checkCollectionName = (name, ignoreId = null) => {
   if (!name) return 'Give the collection a name.'
   if (name.length > COLLECTION_NAME_MAX) return `Use at most ${COLLECTION_NAME_MAX} letters.`
@@ -84,7 +68,6 @@ const checkCollectionName = (name, ignoreId = null) => {
   return ''
 }
 
-// returns the new collection (check the name with checkCollectionName first)
 const createCollection = (name) => {
   const collection = { id: `c-${Date.now()}`, name }
   saveCollections([...getCollections(), collection])
@@ -97,7 +80,6 @@ const renameCollection = (collectionId, name) => {
   }))
 }
 
-// deletes the collection, the quotes stay in favorites
 const deleteCollection = (collectionId) => {
   saveCollections(getCollections().filter(collection => collection.id !== collectionId))
   saveFavorites(getFavorites().map(quote => ({
@@ -106,7 +88,6 @@ const deleteCollection = (collectionId) => {
   })))
 }
 
-// puts the quote in the collection, or takes it out
 const setInCollection = (quoteId, collectionId, inCollection) => {
   let quote = getFavorite(quoteId)
   let others = getQuoteCollections(quote).filter(id => id !== collectionId)

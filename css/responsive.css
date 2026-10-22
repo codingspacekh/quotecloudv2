@@ -1,5 +1,3 @@
-/* Changes for bigger and smaller screens. Keep this file last. */
-
 @media only screen and (min-width: 768px) {
   .author-list {
     grid-template-columns: 1fr 1fr;
@@ -13,7 +11,6 @@
     margin: auto;
   }
 
-  /* home page: the quote of the day (and its loading shape) is half the screen wide */
   .today-quote-wrapper .picture-quote {
     width: 50%;
   }
@@ -25,7 +22,6 @@
   }
 }
 
-/* phones: the "Download as image" window shows the preview above the choices */
 @media only screen and (max-width: 700px) {
   .image-form {
     grid-template-columns: 1fr;
@@ -36,7 +32,6 @@
   }
 }
 
-/* small phones: make the header fit so the page doesn't scroll sideways */
 @media only screen and (max-width: 600px) {
   .logo img {
     width: 48px;
@@ -63,7 +58,6 @@
     font-size: 16px;
   }
 
-  /* the screen is small, so the footer only shows at the end of the page */
   footer {
     position: static;
   }
@@ -73,7 +67,6 @@
   }
 }
 
-/* very small phones: the menu needs all the room */
 @media only screen and (max-width: 400px) {
   .logo {
     display: none;

@@ -1,6 +1,3 @@
-/* favorites.html */
-
-/* "All", one button per collection, "New collection" */
 .collection-bar {
   width: 90%;
   max-width: 1000px;
@@ -37,7 +34,6 @@
   font-size: 18px;
 }
 
-/* rename / delete the collection being shown */
 .collection-actions {
   margin: 12px auto 0;
   display: flex;

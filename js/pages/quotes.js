@@ -7,13 +7,10 @@ const lengthFilter = document.querySelector('#lengthFilter')
 const params = new URLSearchParams(window.location.search)
 let query = params.get('query')
 let tag = params.get('tag')
-// a length in the address wins, otherwise use the one chosen last time
 let quoteLength = params.get('length') || loadSetting('quoteLength', 'all')
 
-// limit must be 10, 25, 50 or 100 on this API
 const QUOTES_URL = `${API_URL}/quotes?limit=25`
 
-// how many characters each length choice allows
 const LENGTHS = {
   all: '',
   short: '&maxLength=60',
@@ -21,13 +18,9 @@ const LENGTHS = {
   long: '&minLength=150',
 }
 
-// the API does the paging for us, pages start at 0
 let page = 0
 let lastPage = 0
-// goes up on every load, so a slower, older answer can't replace a newer one
-// (e.g. when the length is changed twice quickly)
 let loadNumber = 0
-
 
 const getQuotesURL = () => {
   let url = QUOTES_URL + `&page=${page}` + (LENGTHS[quoteLength] || '')
@@ -50,7 +43,6 @@ const getQuotes = async () => {
   try {
     const data = await fetchJSON(getQuotesURL())
     if (thisLoad !== loadNumber) return
-    // the quotes are in "data", paging info is in "metadata"
     let quotes = data.data
     lastPage = data.metadata.lastPage
 
@@ -98,6 +90,5 @@ const start = () => {
 
   getQuotes()
 }
-
 
 start()

@@ -14,32 +14,20 @@ const QUOTE_MIN = 10
 const QUOTE_MAX = 300
 const AUTHOR_MAX = 50
 
-// the quote being edited, or null while writing a new one
 let editingId = null
 
-
-// ---------- saving (localStorage) ----------
-
-// Your quotes look like the API's quotes, so createQuoteCard() can show them:
-// { id: 'my-1696800000000', mine: true, content, author: { name, slug: '' }, tags: [], wallpaper, createdAt }
 const MY_QUOTES_KEY = 'myQuotes'
 
 const getMyQuotes = () => loadJSON(MY_QUOTES_KEY, [])
 
-// returns false when the browser would not save them
 const saveMyQuotes = (quotes) => {
   if (saveJSON(MY_QUOTES_KEY, quotes)) return true
   showToast('Could not save your quotes in this browser')
   return false
 }
 
-
-// ---------- checking the form ----------
-
-// several spaces or new lines become one space
 const cleanText = (text) => text.trim().replace(/\s+/g, ' ')
 
-// returns the problems with the form, '' means that field is fine
 const checkQuote = (text, author) => {
   let errors = { text: '', author: '' }
 
@@ -56,7 +44,6 @@ const checkQuote = (text, author) => {
   if (author.length > AUTHOR_MAX) {
     errors.author = `Use at most ${AUTHOR_MAX} letters.`
   } else if (author && !/\p{L}/u.test(author)) {
-    // \p{L} is any letter, in any language
     errors.author = 'A name needs at least one letter.'
   }
 
@@ -66,12 +53,8 @@ const checkQuote = (text, author) => {
 const updateCount = () => {
   let length = quoteText.value.length
   quoteTextCount.textContent = `${length} / ${QUOTE_MAX}`
-  // almost full
   quoteTextCount.classList.toggle('near-limit', length > QUOTE_MAX - 30)
 }
-
-
-// ---------- the form: add a new quote, or save changes ----------
 
 const resetForm = () => {
   editingId = null
@@ -93,7 +76,6 @@ form.addEventListener('submit', (e) => {
   setFieldError(quoteText, quoteTextError, errors.text)
   setFieldError(quoteAuthor, quoteAuthorError, errors.author)
 
-  // put the keyboard on the first field with a problem
   if (errors.text) {
     quoteText.focus()
     return
@@ -113,27 +95,23 @@ form.addEventListener('submit', (e) => {
     })
   } else {
     savedId = `my-${Date.now()}`
-    // newest first
     quotes.unshift({
       id: savedId,
       mine: true,
       content: text,
       author: { name: author || 'Anonymous', slug: '' },
       tags: [],
-      // the card keeps the same picture every time
       wallpaper: Math.floor(Math.random() * WALLPAPER_COUNT),
       createdAt: new Date().toISOString(),
     })
   }
 
-  // not saved: keep what was typed
   if (!saveMyQuotes(quotes)) return
 
   showToast(editingId ? 'Quote updated' : 'Quote added')
   resetForm()
   displayMyQuotes()
 
-  // show the card that was just saved
   const card = findCard(savedId)
   card.scrollIntoView({ behavior: scrollBehavior(), block: 'center' })
   card.querySelector('[data-action="edit"]').focus({ preventScroll: true })
@@ -153,9 +131,6 @@ cancelEditBtn.addEventListener('click', () => {
   findCard(id).querySelector('[data-action="edit"]').focus()
 })
 
-
-// ---------- your quotes ----------
-
 const displayMyQuotes = () => {
   let quotes = getMyQuotes()
   title.textContent = quotes.length ? `MY QUOTES (${quotes.length})` : `MY QUOTES`
@@ -167,7 +142,6 @@ const displayMyQuotes = () => {
 
   quotesWrapper.innerHTML = quotes.map(quote => createQuoteCard(quote, quote.wallpaper)).join('')
 
-  // the quote in the form gets a border
   if (editingId) {
     findCard(editingId).classList.add('is-editing')
   }
@@ -191,9 +165,6 @@ const startEditing = (quoteId) => {
   quoteText.focus({ preventScroll: true })
 }
 
-// ---------- deleting a quote ----------
-
-// asks first (askToConfirm is in ui.js), then deletes the quote
 const deleteQuote = async (quoteId) => {
   const quote = getMyQuotes().find(q => q.id === quoteId)
   if (!quote) return
@@ -201,7 +172,6 @@ const deleteQuote = async (quoteId) => {
   let remove = await askToConfirm({ title: 'Delete this quote?', text: 'This cannot be undone.', quote })
   if (!remove) return
 
-  // remember where the card was, to put the keyboard on the card that takes its place
   let position = getCardPosition(quotesWrapper, quoteId)
 
   if (!saveMyQuotes(getMyQuotes().filter(q => q.id !== quoteId))) return
@@ -209,11 +179,9 @@ const deleteQuote = async (quoteId) => {
   displayMyQuotes()
   showToast('Quote deleted')
 
-  // the next card (or the one before, if it was the last), or the form when none are left
   if (!focusCardAt(quotesWrapper, position, 'delete')) quoteText.focus()
 }
 
-// the edit and delete buttons on the cards (quote-card.js handles copy, download, ...)
 quotesWrapper.addEventListener('click', (e) => {
   const btn = e.target.closest('[data-action="edit"], [data-action="delete"]')
   if (!btn) return

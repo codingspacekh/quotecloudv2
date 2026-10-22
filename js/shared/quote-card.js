@@ -1,16 +1,9 @@
-// The quote card used on every page, and what its buttons do
-// (the buttons that only some pages have are handled in that page's file)
-// needs: favorites-store.js, ui.js, image-dialog.js
-// All text from the API goes through escapeHTML (see ui.js) before it is used in HTML.
-
-// there are 10 wallpapers in assets/images/wallpapers (wallpaper0.jpeg ... wallpaper9.jpeg)
 const WALLPAPER_COUNT = 10
 
 const getWallpaper = (index) => {
   return `assets/images/wallpapers/wallpaper${index % WALLPAPER_COUNT}.jpeg`
 }
 
-// tags are objects like { id, name }
 const getTags = (tags) => {
   let tagContents = ''
   for (let i = 0; i < tags.length; i++) {
@@ -20,22 +13,15 @@ const getTags = (tags) => {
   return tagContents
 }
 
-// author is an object like { id, name, slug, description, bio, link }
-// (quotes you wrote yourself have no slug, so there is no author page to link to)
 const getAuthorLink = (author) => {
   if (!author.slug) return escapeHTML(author.name)
   return `<a href="author.html?slug=${encodeURIComponent(author.slug)}" class="link">${escapeHTML(author.name)}</a>`
 }
 
-// ---------- quote cards ----------
-
-// every quote shown on the page, so the card buttons can find it by id
 const shownQuotes = {}
 
-// CSS selector for the card(s) of one quote
 const cardSelector = (quoteId) => `.picture-quote[data-id="${CSS.escape(quoteId)}"]`
 
-// the card of a quote on the page, or null when it isn't shown
 const findCard = (quoteId) => document.querySelector(cardSelector(quoteId))
 
 const getFavoriteButton = (quoteId) => {
@@ -48,7 +34,6 @@ const getFavoriteButton = (quoteId) => {
   `
 }
 
-// a small round button on the card, the click is handled by its data-action
 const actionButton = (action, icon, label) => {
   return `
   <button class="card-action" data-action="${action}" aria-label="${label}" title="${label}">
@@ -57,7 +42,6 @@ const actionButton = (action, icon, label) => {
   `
 }
 
-// first buttons on the card: the heart, or edit + delete for quotes you wrote (my-quotes.js)
 const getMainButtons = (quote) => {
   if (quote.mine) {
     return actionButton('edit', 'create-outline', 'Edit quote') + actionButton('delete', 'trash-outline', 'Delete quote')
@@ -65,7 +49,6 @@ const getMainButtons = (quote) => {
   return getFavoriteButton(quote.id)
 }
 
-// favorites page only: your note and collections (handled in favorites.js)
 const getFavoriteInfo = (quote) => {
   let chips = getCollections()
     .filter(collection => isInCollection(quote, collection.id))
@@ -83,8 +66,6 @@ const getFavoriteButtons = (quote) => {
     + actionButton('collections', 'folder-outline', 'Add to a collection')
 }
 
-// the quote text is shown once, on top of the picture
-// options.favoriteTools: show your note and collection buttons (favorites page)
 const createQuoteCard = (quote, imgIndex = Math.floor(Math.random() * WALLPAPER_COUNT), options = {}) => {
   shownQuotes[quote.id] = quote
   let showTools = options.favoriteTools === true
@@ -125,20 +106,14 @@ const focusCardAt = (wrapper, position, action) => {
   return true
 }
 
-// ---------- card buttons: favorite, copy, download ----------
-
 const copyText = async (text) => {
-  // navigator.clipboard only works on https or localhost,
-  // and the browser can still say no
   if (navigator.clipboard && window.isSecureContext) {
     try {
       await navigator.clipboard.writeText(text)
       return
     } catch (error) {
-      // try the older way below
     }
   }
-  // older way, works almost everywhere
   const textarea = document.createElement('textarea')
   textarea.value = text
   textarea.style.position = 'fixed'
@@ -161,8 +136,6 @@ document.addEventListener('click', async (e) => {
   const quote = shownQuotes[card.dataset.id]
 
   if (btn.dataset.action === 'favorite') {
-    // ask first when removing a favorite loses something: your note and collections,
-    // or the card itself on the favorites page (it disappears from the list)
     let saved = getFavorite(quote.id)
     let hasExtras = saved && (saved.note || getQuoteCollections(saved).length > 0)
     let onFavoritesPage = document.querySelector('#favorites') !== null
@@ -178,12 +151,10 @@ document.addEventListener('click', async (e) => {
       if (!remove) return
     }
     let favorite = toggleFavorite(quote)
-    // the same quote can be on the page twice (e.g. quote of the day + famous quotes)
     document.querySelectorAll(`${cardSelector(quote.id)} [data-action="favorite"]`).forEach(button => {
       button.outerHTML = getFavoriteButton(quote.id)
     })
     showToast(favorite ? 'Saved to favorites' : 'Removed from favorites')
-    // lets favorites.html remove the card straight away
     document.dispatchEvent(new CustomEvent('favorites-changed', { detail: { quote, favorite } }))
   }
 
@@ -197,7 +168,6 @@ document.addEventListener('click', async (e) => {
   }
 
   if (btn.dataset.action === 'download') {
-    // opens the window to pick the size and background (image-dialog.js)
     openImageDialog(quote, parseInt(card.dataset.wallpaper))
   }
 })
