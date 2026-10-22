@@ -14,9 +14,9 @@ const params = new URLSearchParams(window.location.search)
 let slug = params.get('slug')
 
 // limit must be 10, 25, 50 or 100 on this API
-let AUTHORS_URL = `${API_URL}/authors?limit=100`
-let AUTHOR_URL = `${API_URL}/authors/slug/`
-let AUTHOR_QUOTES_URL = `${API_URL}/quotes?limit=100&author=`
+const AUTHORS_URL = `${API_URL}/authors?limit=100`
+const AUTHOR_URL = `${API_URL}/authors/slug/`
+const AUTHOR_QUOTES_URL = `${API_URL}/quotes?limit=100&author=`
 
 const AUTHORS_PER_PAGE = 48
 const LETTERS = ['All', ...'ABCDEFGHIJKLMNOPQRSTUVWXYZ', '#']
@@ -71,7 +71,8 @@ const getFirstLetter = (name) => {
   return first >= 'A' && first <= 'Z' ? first : '#'
 }
 
-// "Émile" matches "emile" too
+// "Émile" matches "emile" too: NFD splits "É" into "E" + an accent mark,
+// and ̀-ͯ are the accent marks, which are then removed
 const simplify = (text) => text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
 
 const getFilteredAuthors = () => {
@@ -122,8 +123,8 @@ const updateAuthorList = () => {
     return
   }
 
-  let start = page * AUTHORS_PER_PAGE
-  displayAuthors(authors.slice(start, start + AUTHORS_PER_PAGE))
+  let first = page * AUTHORS_PER_PAGE
+  displayAuthors(authors.slice(first, first + AUTHORS_PER_PAGE))
   btnGroup.innerHTML = createPageButtons(page, lastPage)
 }
 
@@ -133,7 +134,7 @@ const getAuthors = async () => {
     allAuthors = await getAllAuthors()
     updateAuthorList()
   } catch (error) {
-    console.log('some error occurred:', error.message)
+    console.error('Could not load authors:', error)
     showError(listWrapper, 'Could not load authors.', getAuthors, error)
   }
 }
@@ -186,7 +187,7 @@ const getAuthor = async () => {
     let quotes = quotesData.data
     quotesWrapper.innerHTML = quotes.map((quote, i) => createQuoteCard(quote, i)).join('')
   } catch (error) {
-    console.log('some error occurred:', error.message)
+    console.error('Could not load this author:', error)
     if (error.status === 404 || error.status === 422) {
       // the API says this author doesn't exist, trying again won't help
       title.textContent = `AUTHOR NOT FOUND`
@@ -198,7 +199,7 @@ const getAuthor = async () => {
 }
 
 
-function start() {
+const start = () => {
   authorInput.value = searchTerm
   // the sort chosen last time ("quotes" or "name")
   let savedSort = loadSetting('authorSort', 'quotes')

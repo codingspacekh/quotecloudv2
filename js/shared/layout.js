@@ -103,10 +103,7 @@ const showShortcuts = () => {
     </dl>
     <form method="dialog"><button class="btn">Close</button></form>
     `
-    // clicking the dark area around the window closes it
-    dialog.addEventListener('click', (e) => {
-      if (e.target === dialog) dialog.close()
-    })
+    closeOnBackdropClick(dialog)
     document.body.appendChild(dialog)
   }
   if (!dialog.open) dialog.showModal()
@@ -197,7 +194,7 @@ const registerServiceWorker = () => {
   // wait until the page has loaded, so saving the files doesn't slow it down
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('sw.js').catch(error => {
-      console.log('offline mode is not available:', error.message)
+      console.error('Offline mode is not available:', error)
     })
   })
 }

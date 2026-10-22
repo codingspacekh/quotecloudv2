@@ -35,6 +35,9 @@ const tagSkeletons = (count) => loadingText + repeat(count, `
 // message can contain HTML (e.g. a link), so only pass text you wrote yourself
 const messageView = (message) => `<p class="message">${message}</p>`
 
+// “The quote” — Author, as plain text (for copying, and at the top of pop-up windows)
+const formatQuote = (quote) => `“${quote.content}” — ${quote.author.name}`
+
 
 // ---------- safe HTML ----------
 
@@ -86,8 +89,11 @@ const showError = (container, message, onRetry, error) => {
   </div>
   `
 
+  const errorBox = container.querySelector('.error-message')
   const retry = () => {
     window.removeEventListener('online', retry)
+    // something else was shown here in the meantime (or a newer error), so leave it
+    if (!errorBox.isConnected) return
     onRetry()
   }
   container.querySelector('.retry-btn').addEventListener('click', retry)
@@ -124,6 +130,17 @@ const showToast = (message) => {
 }
 
 
+// ---------- pop-up windows (<dialog>) ----------
+
+// clicking the dark area around the window closes it
+// (returnValue is left as it was, like pressing Escape)
+const closeOnBackdropClick = (dialog) => {
+  dialog.addEventListener('click', (e) => {
+    if (e.target === dialog) dialog.close()
+  })
+}
+
+
 // ---------- "Are you sure?" window ----------
 
 // A nicer replacement for confirm(). It gives back a Promise:
@@ -151,11 +168,7 @@ const createConfirmDialog = () => {
   // returnValue tells askToConfirm which button closed the window
   dialog.querySelector('.cancel-btn').addEventListener('click', () => dialog.close('cancel'))
   dialog.querySelector('.confirm-btn').addEventListener('click', () => dialog.close('confirm'))
-
-  // clicking the dark area around the window closes it
-  dialog.addEventListener('click', (e) => {
-    if (e.target === dialog) dialog.close('cancel')
-  })
+  closeOnBackdropClick(dialog)
 
   document.body.appendChild(dialog)
   return dialog
@@ -172,7 +185,7 @@ const askToConfirm = ({ title, text, quote = null, confirmLabel = 'Delete' }) =>
   confirmDialog.querySelector('.confirm-label').textContent = confirmLabel
 
   const quoteBox = confirmDialog.querySelector('.dialog-quote')
-  quoteBox.textContent = quote ? `“${quote.content}” — ${quote.author.name}` : ''
+  quoteBox.textContent = quote ? formatQuote(quote) : ''
   quoteBox.classList.toggle('hide', !quote)
 
   // Escape also closes the window, with returnValue left as ''

@@ -68,7 +68,7 @@
     position: static;
   }
 
-  .back-to-top {
+  .back-to-top, .toast {
     bottom: 20px;
   }
 }

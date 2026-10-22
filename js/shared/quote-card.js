@@ -32,6 +32,12 @@ const getAuthorLink = (author) => {
 // every quote shown on the page, so the card buttons can find it by id
 const shownQuotes = {}
 
+// CSS selector for the card(s) of one quote
+const cardSelector = (quoteId) => `.picture-quote[data-id="${CSS.escape(quoteId)}"]`
+
+// the card of a quote on the page, or null when it isn't shown
+const findCard = (quoteId) => document.querySelector(cardSelector(quoteId))
+
 const getFavoriteButton = (quoteId) => {
   let favorite = isFavorite(quoteId)
   return `
@@ -41,8 +47,6 @@ const getFavoriteButton = (quoteId) => {
   </button>
   `
 }
-
-const getShareText = (quote) => `"${quote.content}" — ${quote.author.name}`
 
 // a small round button on the card, the click is handled by its data-action
 const actionButton = (action, icon, label) => {
@@ -162,7 +166,7 @@ document.addEventListener('click', async (e) => {
     }
     let favorite = toggleFavorite(quote)
     // the same quote can be on the page twice (e.g. quote of the day + famous quotes)
-    document.querySelectorAll(`.picture-quote[data-id="${CSS.escape(quote.id)}"] [data-action="favorite"]`).forEach(button => {
+    document.querySelectorAll(`${cardSelector(quote.id)} [data-action="favorite"]`).forEach(button => {
       button.outerHTML = getFavoriteButton(quote.id)
     })
     showToast(favorite ? 'Saved to favorites' : 'Removed from favorites')
@@ -172,7 +176,7 @@ document.addEventListener('click', async (e) => {
 
   if (btn.dataset.action === 'copy') {
     try {
-      await copyText(getShareText(quote))
+      await copyText(formatQuote(quote))
       showToast('Quote copied!')
     } catch (error) {
       showToast('Could not copy the quote')

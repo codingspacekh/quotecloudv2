@@ -2,18 +2,10 @@
 
 const FAVORITES_KEY = 'favoriteQuotes'
 
-const getFavorites = () => {
-  try {
-    return JSON.parse(localStorage.getItem(FAVORITES_KEY)) || []
-  } catch (error) {
-    return []
-  }
-}
+const getFavorites = () => loadJSON(FAVORITES_KEY, [])
 
 const saveFavorites = (favorites) => {
-  try {
-    localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites))
-  } catch (error) {
+  if (!saveJSON(FAVORITES_KEY, favorites)) {
     showToast('Could not save favorites in this browser')
   }
 }
@@ -67,18 +59,10 @@ const updateFavorite = (quoteId, changes) => {
 const COLLECTIONS_KEY = 'quoteCollections'
 const COLLECTION_NAME_MAX = 30
 
-const getCollections = () => {
-  try {
-    return JSON.parse(localStorage.getItem(COLLECTIONS_KEY)) || []
-  } catch (error) {
-    return []
-  }
-}
+const getCollections = () => loadJSON(COLLECTIONS_KEY, [])
 
 const saveCollections = (collections) => {
-  try {
-    localStorage.setItem(COLLECTIONS_KEY, JSON.stringify(collections))
-  } catch (error) {
+  if (!saveJSON(COLLECTIONS_KEY, collections)) {
     showToast('Could not save collections in this browser')
   }
 }

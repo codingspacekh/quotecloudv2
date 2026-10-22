@@ -1,6 +1,6 @@
 const tagsWrapper = document.querySelector('.tag-list')
 
-let TAGS_URL = `${API_URL}/tags`
+const TAGS_URL = `${API_URL}/tags`
 
 
 const getAllTags = async () => {
@@ -23,7 +23,7 @@ const getAllTags = async () => {
     }).join('')
 
   } catch (error) {
-    console.log('some error occurred:', error.message)
+    console.error('Could not load tags:', error)
     showError(tagsWrapper, 'Could not load tags.', getAllTags, error)
   }
 }

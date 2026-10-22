@@ -9,7 +9,6 @@ const quoteAuthorError = document.querySelector('#quoteAuthorError')
 const submitBtn = document.querySelector('.quote-form .submit-btn')
 const cancelEditBtn = document.querySelector('.quote-form .cancel-edit-btn')
 const quotesWrapper = document.querySelector('.quotes-wrapper')
-const deleteDialog = document.querySelector('#deleteDialog')
 
 const QUOTE_MIN = 10
 const QUOTE_MAX = 300
@@ -17,8 +16,6 @@ const AUTHOR_MAX = 50
 
 // the quote being edited, or null while writing a new one
 let editingId = null
-// the quote the delete window is asking about
-let deletingId = null
 
 
 // ---------- saving (localStorage) ----------
@@ -27,23 +24,13 @@ let deletingId = null
 // { id: 'my-1696800000000', mine: true, content, author: { name, slug: '' }, tags: [], wallpaper, createdAt }
 const MY_QUOTES_KEY = 'myQuotes'
 
-const getMyQuotes = () => {
-  try {
-    return JSON.parse(localStorage.getItem(MY_QUOTES_KEY)) || []
-  } catch (error) {
-    return []
-  }
-}
+const getMyQuotes = () => loadJSON(MY_QUOTES_KEY, [])
 
 // returns false when the browser would not save them
 const saveMyQuotes = (quotes) => {
-  try {
-    localStorage.setItem(MY_QUOTES_KEY, JSON.stringify(quotes))
-    return true
-  } catch (error) {
-    showToast('Could not save your quotes in this browser')
-    return false
-  }
+  if (saveJSON(MY_QUOTES_KEY, quotes)) return true
+  showToast('Could not save your quotes in this browser')
+  return false
 }
 
 
@@ -169,10 +156,6 @@ cancelEditBtn.addEventListener('click', () => {
 
 // ---------- your quotes ----------
 
-const findCard = (quoteId) => {
-  return quotesWrapper.querySelector(`.picture-quote[data-id="${CSS.escape(quoteId)}"]`)
-}
-
 const displayMyQuotes = () => {
   let quotes = getMyQuotes()
   title.textContent = quotes.length ? `MY QUOTES (${quotes.length})` : `MY QUOTES`
@@ -210,23 +193,20 @@ const startEditing = (quoteId) => {
 
 // ---------- deleting a quote ----------
 
-const openDeleteDialog = (quoteId) => {
+// asks first (askToConfirm is in ui.js), then deletes the quote
+const deleteQuote = async (quoteId) => {
   const quote = getMyQuotes().find(q => q.id === quoteId)
   if (!quote) return
 
-  deletingId = quoteId
-  deleteDialog.querySelector('.dialog-quote').textContent = `“${quote.content}” — ${quote.author.name}`
-  deleteDialog.showModal()
-}
+  let remove = await askToConfirm({ title: 'Delete this quote?', text: 'This cannot be undone.', quote })
+  if (!remove) return
 
-const deleteQuote = () => {
   // remember where the card was, to put the keyboard on the card that takes its place
   let cards = [...quotesWrapper.querySelectorAll('.picture-quote')]
-  let position = cards.indexOf(findCard(deletingId))
+  let position = cards.indexOf(findCard(quoteId))
 
-  if (!saveMyQuotes(getMyQuotes().filter(quote => quote.id !== deletingId))) return
-  if (editingId === deletingId) resetForm()
-  deleteDialog.close()
+  if (!saveMyQuotes(getMyQuotes().filter(q => q.id !== quoteId))) return
+  if (editingId === quoteId) resetForm()
   displayMyQuotes()
   showToast('Quote deleted')
 
@@ -240,14 +220,6 @@ const deleteQuote = () => {
   }
 }
 
-deleteDialog.querySelector('.confirm-delete-btn').addEventListener('click', deleteQuote)
-deleteDialog.querySelector('.cancel-btn').addEventListener('click', () => deleteDialog.close())
-
-// clicking the dark area around the window closes it
-deleteDialog.addEventListener('click', (e) => {
-  if (e.target === deleteDialog) deleteDialog.close()
-})
-
 // the edit and delete buttons on the cards (quote-card.js handles copy, download, ...)
 quotesWrapper.addEventListener('click', (e) => {
   const btn = e.target.closest('[data-action="edit"], [data-action="delete"]')
@@ -257,7 +229,7 @@ quotesWrapper.addEventListener('click', (e) => {
   if (btn.dataset.action === 'edit') {
     startEditing(quoteId)
   } else {
-    openDeleteDialog(quoteId)
+    deleteQuote(quoteId)
   }
 })
 

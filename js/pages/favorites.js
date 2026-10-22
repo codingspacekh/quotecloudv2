@@ -49,13 +49,7 @@ const updateTitle = () => {
 
 const setCurrentCollection = (collectionId) => {
   currentCollection = collectionId
-  const url = new URL(window.location.href)
-  if (collectionId === ALL) {
-    url.searchParams.delete('collection')
-  } else {
-    url.searchParams.set('collection', collectionId)
-  }
-  history.replaceState(null, '', url)
+  setURLParam('collection', collectionId === ALL ? null : collectionId)
 }
 
 const collectionButton = (id, name, count) => {
@@ -104,12 +98,12 @@ const displayFavorites = () => {
   updateTitle()
   displayCollectionBar()
 
-  if (getFavorites().length === 0) {
+  let favorites = getFavorites()
+  if (favorites.length === 0) {
     quotesWrapper.innerHTML = emptyMessage
     return
   }
 
-  let favorites = getFavorites()
   if (currentCollection !== ALL) {
     favorites = favorites.filter(quote => isInCollection(quote, currentCollection))
   }
@@ -120,10 +114,6 @@ const displayFavorites = () => {
   }
 
   quotesWrapper.innerHTML = favorites.map((quote, i) => createQuoteCard(quote, i, { favoriteTools: true })).join('')
-}
-
-const findCard = (quoteId) => {
-  return quotesWrapper.querySelector(`.picture-quote[data-id="${CSS.escape(quoteId)}"]`)
 }
 
 // draws one card again after its note or collections changed (it keeps its picture),
@@ -149,7 +139,7 @@ const refreshCard = (quoteId, action) => {
 
 // the quote at the top of a window, so you know which one you are changing
 const showDialogQuote = (dialog, quote) => {
-  dialog.querySelector('.dialog-quote').textContent = `“${quote.content}” — ${quote.author.name}`
+  dialog.querySelector('.dialog-quote').textContent = formatQuote(quote)
 }
 
 
@@ -188,6 +178,7 @@ noteDialog.querySelector('form').addEventListener('submit', (e) => {
 
 noteDialog.querySelector('.delete-note-btn').addEventListener('click', () => saveNote(''))
 noteDialog.querySelector('.cancel-btn').addEventListener('click', () => noteDialog.close())
+closeOnBackdropClick(noteDialog)
 
 
 // ---------- putting a quote in collections ----------
@@ -247,6 +238,7 @@ newCollectionForm.addEventListener('submit', (e) => {
 newCollectionName.addEventListener('input', () => setFieldError(newCollectionName, newCollectionError, ''))
 
 collectionsDialog.querySelector('.done-btn').addEventListener('click', () => collectionsDialog.close())
+closeOnBackdropClick(collectionsDialog)
 
 // closed with Done or Escape: show the changes on the card
 collectionsDialog.addEventListener('close', () => refreshCard(dialogQuoteId, 'collections'))
@@ -289,6 +281,7 @@ collectionNameDialog.querySelector('form').addEventListener('submit', (e) => {
 
 collectionName.addEventListener('input', () => setFieldError(collectionName, collectionNameError, ''))
 collectionNameDialog.querySelector('.cancel-btn').addEventListener('click', () => collectionNameDialog.close())
+closeOnBackdropClick(collectionNameDialog)
 
 
 // ---------- clicks ----------

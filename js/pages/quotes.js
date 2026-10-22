@@ -11,7 +11,7 @@ let tag = params.get('tag')
 let length = params.get('length') || loadSetting('quoteLength', 'all')
 
 // limit must be 10, 25, 50 or 100 on this API
-let QUOTES_URL = `${API_URL}/quotes?limit=25`
+const QUOTES_URL = `${API_URL}/quotes?limit=25`
 
 // how many characters each length choice allows
 const LENGTHS = {
@@ -24,6 +24,9 @@ const LENGTHS = {
 // the API does the paging for us, pages start at 0
 let page = 0
 let lastPage = 0
+// goes up on every load, so a slower, older answer can't replace a newer one
+// (e.g. when the length is changed twice quickly)
+let loadNumber = 0
 
 
 const getQuotesURL = () => {
@@ -36,15 +39,17 @@ const getQuotesURL = () => {
   return url
 }
 
-function displayQuotes(quotes) {
+const displayQuotes = (quotes) => {
   quotesWrapper.innerHTML = quotes.map(quote => createQuoteCard(quote)).join('')
 }
 
 const getQuotes = async () => {
+  let thisLoad = ++loadNumber
   quotesWrapper.innerHTML = quoteSkeletons(6)
   btnGroup.innerHTML = ``
   try {
     const data = await fetchJSON(getQuotesURL())
+    if (thisLoad !== loadNumber) return
     // the quotes are in "data", paging info is in "metadata"
     let quotes = data.data
     lastPage = data.metadata.lastPage
@@ -57,7 +62,8 @@ const getQuotes = async () => {
     displayQuotes(quotes)
     btnGroup.innerHTML = createPageButtons(page, lastPage)
   } catch (error) {
-    console.log('some error may occur', error.message)
+    if (thisLoad !== loadNumber) return
+    console.error('Could not load quotes:', error)
     showError(quotesWrapper, 'Could not load quotes.', getQuotes, error)
   }
 }
@@ -71,16 +77,7 @@ lengthFilter.addEventListener('change', () => {
   length = lengthFilter.value
   page = 0
   saveSetting('quoteLength', length)
-
-  // keep the choice in the address, so refresh and sharing the link keep it
-  const url = new URL(window.location.href)
-  if (length === 'all') {
-    url.searchParams.delete('length')
-  } else {
-    url.searchParams.set('length', length)
-  }
-  history.replaceState(null, '', url)
-
+  setURLParam('length', length === 'all' ? null : length)
   getQuotes()
 })
 

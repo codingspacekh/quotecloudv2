@@ -89,11 +89,7 @@ const createImageDialog = () => {
   })
 
   dialog.querySelector('.cancel-btn').addEventListener('click', () => dialog.close())
-
-  // clicking the dark area around the window closes it
-  dialog.addEventListener('click', (e) => {
-    if (e.target === dialog) dialog.close()
-  })
+  closeOnBackdropClick(dialog)
 
   document.body.appendChild(dialog)
   return dialog
@@ -135,7 +131,7 @@ const downloadImage = async () => {
     imageDialog.close()
     showToast(withPicture ? 'Image downloaded' : 'Image downloaded without the picture (open the site with a local server to keep it)')
   } catch (error) {
-    console.log('some error occurred:', error.message)
+    console.error('Could not create the image:', error)
     showToast('Could not create the image')
   }
   button.disabled = false

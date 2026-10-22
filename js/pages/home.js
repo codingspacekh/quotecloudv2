@@ -3,11 +3,12 @@ const todayQuoteTitle = document.querySelector('#today-quote .title')
 const todayQuoteWrapper = document.querySelector('.today-quote-wrapper')
 const quotesWrapper = document.querySelector('.quotes-wrapper')
 
-let SINGLE_QUOTE_URL = `${API_URL}/quotes/random?maxLength=150`
+const SINGLE_QUOTE_URL = `${API_URL}/quotes/random?maxLength=150`
 // limit must be 10, 25, 50 or 100 on this API
-let DAILY_QUOTE_URL = `${API_URL}/quotes?limit=10&maxLength=150`
-let FAMOUS_QUOTE_URL = `${API_URL}/quotes?tags=Famous%20Quotes&limit=10&maxLength=100`
-let FAMOUS_QUOTE_COUNT = 6
+const DAILY_PAGE_SIZE = 10
+const DAILY_QUOTE_URL = `${API_URL}/quotes?limit=${DAILY_PAGE_SIZE}&maxLength=150`
+const FAMOUS_QUOTE_URL = `${API_URL}/quotes?tags=Famous%20Quotes&limit=10&maxLength=100`
+const FAMOUS_QUOTE_COUNT = 6
 
 
 // a number that goes up by 1 every day (based on the visitor's own date)
@@ -19,25 +20,28 @@ const getDayNumber = () => {
 // everyone gets the same quote on the same day:
 // the day number picks one quote out of the whole list
 const getQuoteOfTheDay = async () => {
+  // no random quote while this loads, otherwise this answer could replace it
+  randomBtn.disabled = true
   todayQuoteTitle.textContent = `QUOTE OF THE DAY`
   todayQuoteWrapper.innerHTML = quoteSkeletons(1)
   try {
     // the first page also tells us how many quotes there are
     let data = await fetchJSON(DAILY_QUOTE_URL + `&page=0`)
     let quoteNumber = getDayNumber() % data.metadata.total
-    let page = Math.floor(quoteNumber / 10)
+    let page = Math.floor(quoteNumber / DAILY_PAGE_SIZE)
 
     if (page !== 0) {
       data = await fetchJSON(DAILY_QUOTE_URL + `&page=${page}`)
     }
 
-    let quote = data.data[quoteNumber % 10]
+    let quote = data.data[quoteNumber % DAILY_PAGE_SIZE]
     todayQuoteWrapper.innerHTML = createQuoteCard(quote, getDayNumber())
 
   } catch (error) {
-    console.log('some error occurred:', error.message)
+    console.error('Could not load the quote of the day:', error)
     showError(todayQuoteWrapper, 'Could not load the quote of the day.', getQuoteOfTheDay, error)
   }
+  randomBtn.disabled = false
 }
 
 const getRandomQuote = async () => {
@@ -48,13 +52,10 @@ const getRandomQuote = async () => {
   todayQuoteWrapper.innerHTML = quoteSkeletons(1)
   try {
     const data = await fetchJSON(SINGLE_QUOTE_URL)
-
-    let quote = data.quote
-    // console.log(quote)
-    todayQuoteWrapper.innerHTML = createQuoteCard(quote)
+    todayQuoteWrapper.innerHTML = createQuoteCard(data.quote)
 
   } catch (error) {
-    console.log('some error occurred:', error.message)
+    console.error('Could not load a random quote:', error)
     showError(todayQuoteWrapper, 'Could not load a quote.', getRandomQuote, error)
   }
   randomBtn.disabled = false
@@ -87,12 +88,12 @@ const getFamousQuotes = async () => {
     quotesWrapper.innerHTML = quotes.map((quote, i) => createQuoteCard(quote, i)).join('')
 
   } catch (error) {
-    console.log('some error occurred:', error.message)
+    console.error('Could not load famous quotes:', error)
     showError(quotesWrapper, 'Could not load famous quotes.', getFamousQuotes, error)
   }
 }
 
-function start() {
+const start = () => {
   getQuoteOfTheDay()
 
   randomBtn.addEventListener('click', getRandomQuote)
