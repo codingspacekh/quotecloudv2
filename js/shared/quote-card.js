@@ -1,7 +1,7 @@
-const WALLPAPER_COUNT = 10
+const WALLPAPER_COUNT = WALLPAPERS.length
 
 const getWallpaper = (index) => {
-  return `assets/images/wallpapers/wallpaper${index % WALLPAPER_COUNT}.jpeg`
+  return WALLPAPERS[index % WALLPAPER_COUNT]
 }
 
 const getTags = (tags) => {

@@ -42,7 +42,7 @@ so the results don't depend on the internet. `npm test` starts its own server on
 | `tests/card-actions.spec.js`    | copy and "download as image"                                 |
 | `tests/layout.spec.js`          | every page loads, theme, shortcuts, back-to-top, offline bar |
 | `tests/shared-helpers.spec.js`  | `fixText`, `escapeHTML`, `safeURL`, `createPageButtons`, ... |
-| `tests/service-worker.spec.js`  | every site file is in `APP_FILES` in `sw.js`, and nothing extra |
+| `tests/service-worker.spec.js`  | every site file is in `APP_FILES` in `sw.js`, and the wallpaper list matches the folder |
 
 A test also fails when any script on the page crashes (see `tests/helpers.js`).
 
@@ -57,10 +57,11 @@ A test also fails when any script on the page crashes (see `tests/helpers.js`).
 ├── my-quotes.html        Write, edit and delete your own quotes
 ├── sw.js                 service worker: makes the site work offline (must stay in this folder)
 ├── tests/                browser tests (see "Run the tests"), not part of the site
-├── package.json          only for the tests
+├── package.json          only for the tests and `npm run wallpapers`
+├── scripts/              update-wallpapers.js (see "Add wallpapers")
 ├── playwright.config.js  test settings
 │
-├── assets/images/        logo, favicon, banner and the 10 card wallpapers
+├── assets/images/        logo, favicon, banner and the card wallpapers (wallpapers/)
 │
 ├── css/
 │   ├── main.css          the only file the pages load, imports the rest in order
@@ -78,6 +79,7 @@ A test also fails when any script on the page crashes (see `tests/helpers.js`).
     │   ├── api.js            API address, fetchJSON() (timeout + one retry), fixes broken names
     │   ├── ui.js             loading skeletons, error messages, toast pop-up
     │   ├── favorites-store.js  favorites, notes and collections (localStorage)
+    │   ├── wallpapers.js     the list of card wallpapers, made by `npm run wallpapers` (don't edit by hand)
     │   ├── quote-image.js    "download as image": draws the quote on a canvas
     │   ├── image-dialog.js   the window to pick image size, text size and background
     │   ├── quote-card.js     createQuoteCard() and its buttons
@@ -100,6 +102,7 @@ Every page loads the shared files in this order, then its own page file last:
 <script src="js/shared/api.js"></script>
 <script src="js/shared/ui.js"></script>
 <script src="js/shared/favorites-store.js"></script>
+<script src="js/shared/wallpapers.js"></script>
 <script src="js/shared/quote-image.js"></script>
 <script src="js/shared/image-dialog.js"></script>
 <script src="js/shared/quote-card.js"></script>
@@ -128,6 +131,8 @@ the pages and the internet. It is registered in `registerServiceWorker()` in
 
 **Added a file to the site?** Add it to `APP_FILES` in `sw.js` and change `CACHE_VERSION`
 (e.g. to `'v2'`), so browsers save the new list and delete the old caches.
+Wallpapers are the exception: `npm run wallpapers` is enough, because `sw.js` loads
+`js/shared/wallpapers.js`, and browsers update the service worker when that file changes.
 
 **Want to start fresh while testing?** Chrome DevTools → Application → Service workers →
 Unregister, then Storage → Clear site data. To try offline mode: DevTools → Network → Offline.
@@ -147,6 +152,25 @@ Everything below lives in `localStorage`, so it stays on this computer and brows
 Your own quotes are stored in the same shape as quotes from the API
 (`content`, `author.name`, `tags`), plus `mine: true`, so `createQuoteCard()`
 can show them. Cards with `mine: true` get edit and delete buttons instead of the heart.
+
+## Add wallpapers
+
+1. Put the pictures in `assets/images/wallpapers/` (`.jpg`, `.jpeg`, `.png` or `.webp`).
+   Any name works if it only uses letters, numbers, `-`, `_` and `.`, e.g. `beach-sunset.jpg`.
+2. Run:
+
+   ```bash
+   npm run wallpapers
+   ```
+
+That's all. The script writes the list to `js/shared/wallpapers.js`. The quote cards, the
+"download as image" window and `sw.js` (offline mode) all read that list, so nothing else
+needs changing. A browser can't look inside a folder on a website by itself, which is why
+the list is made by this script.
+
+- New pictures go at the end of the list, so the quotes you wrote keep their picture.
+- It warns about pictures over 500 KB. About 1920 px wide is plenty: big photos make the site slow on phones.
+- Forgot to run it? `npm test` fails and tells you to.
 
 ## Keyboard shortcuts
 
@@ -168,7 +192,7 @@ while you are typing in a box.
 | use a different quotes API      | `API_URL` in `js/shared/api.js`             |
 | change theme colors             | `css/variables.css`                         |
 | change how a quote card looks   | `js/shared/quote-card.js` + `css/components.css` |
-| add a wallpaper                 | add `wallpaperN.jpeg` to `assets/images/wallpapers/` and update `WALLPAPER_COUNT` in `js/shared/quote-card.js` |
+| add or remove a wallpaper       | put the picture in `assets/images/wallpapers/`, then run `npm run wallpapers` (see "Add wallpapers") |
 | add an image size (download)    | `IMAGE_SIZES` in `js/shared/quote-image.js` |
 | add a keyboard shortcut         | `SHORTCUTS` and `setupShortcuts()` in `js/shared/layout.js` |
 | change the loading placeholders | `quoteSkeletons()` etc. in `js/shared/ui.js` + `.skeleton` in `css/components.css` |

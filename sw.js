@@ -1,3 +1,5 @@
+importScripts('js/shared/wallpapers.js')
+
 const CACHE_VERSION = 'v1'
 const APP_CACHE = `quote-cloud-app-${CACHE_VERSION}`
 const DATA_CACHE = `quote-cloud-data-${CACHE_VERSION}`
@@ -30,6 +32,7 @@ const APP_FILES = [
 
   'js/theme.js',
   'js/shared/settings.js',
+  'js/shared/wallpapers.js',
   'js/shared/api.js',
   'js/shared/ui.js',
   'js/shared/favorites-store.js',
@@ -48,16 +51,7 @@ const APP_FILES = [
   'assets/images/logo.png',
   'assets/images/favicon.svg',
   'assets/images/banner.webp',
-  'assets/images/wallpapers/wallpaper0.jpeg',
-  'assets/images/wallpapers/wallpaper1.jpeg',
-  'assets/images/wallpapers/wallpaper2.jpeg',
-  'assets/images/wallpapers/wallpaper3.jpeg',
-  'assets/images/wallpapers/wallpaper4.jpeg',
-  'assets/images/wallpapers/wallpaper5.jpeg',
-  'assets/images/wallpapers/wallpaper6.jpeg',
-  'assets/images/wallpapers/wallpaper7.jpeg',
-  'assets/images/wallpapers/wallpaper8.jpeg',
-  'assets/images/wallpapers/wallpaper9.jpeg',
+  ...WALLPAPERS,
 ]
 
 self.addEventListener('install', (event) => {

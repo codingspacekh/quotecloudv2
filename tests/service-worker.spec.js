@@ -4,12 +4,16 @@ const { test, expect } = require('./helpers')
 
 const ROOT = path.join(__dirname, '..')
 
+const getQuotedNames = (text) => (text.match(/'([^']+)'/g) || []).map(name => name.slice(1, -1))
+
+const getWallpaperList = () => getQuotedNames(fs.readFileSync(path.join(ROOT, 'js/shared/wallpapers.js'), 'utf8'))
+
 const getListedFiles = () => {
   const code = fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8')
   const list = code.match(/const APP_FILES = \[([\s\S]*?)\]/)[1]
-  return list.match(/'([^']+)'/g)
-    .map(file => file.slice(1, -1))
-    .filter(file => file !== './')
+  let files = getQuotedNames(list).filter(file => file !== './')
+  if (list.includes('...WALLPAPERS')) files.push(...getWallpaperList())
+  return files
 }
 
 const getSiteFiles = (folder = '') => {
@@ -34,5 +38,18 @@ test.describe('service worker file list', () => {
 
   test('every page, style, script and picture is in APP_FILES', () => {
     expect(getListedFiles().sort()).toEqual(getSiteFiles().sort())
+  })
+})
+
+test.describe('wallpaper list', () => {
+  test('js/shared/wallpapers.js lists every picture in the wallpapers folder', () => {
+    let pictures = getSiteFiles().filter(file => file.startsWith('assets/images/wallpapers/'))
+    expect(getWallpaperList().sort(), 'the wallpapers folder changed: run "npm run wallpapers"').toEqual(pictures.sort())
+  })
+
+  test('the download window offers every wallpaper', async ({ page }) => {
+    await page.goto('index.html')
+    await page.locator('.today-quote-wrapper [data-action="download"]').click()
+    await expect(page.locator('.image-dialog input[name="background"]')).toHaveCount(getWallpaperList().length + 1)
   })
 })
