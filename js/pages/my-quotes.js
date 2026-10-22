@@ -202,22 +202,15 @@ const deleteQuote = async (quoteId) => {
   if (!remove) return
 
   // remember where the card was, to put the keyboard on the card that takes its place
-  let cards = [...quotesWrapper.querySelectorAll('.picture-quote')]
-  let position = cards.indexOf(findCard(quoteId))
+  let position = getCardPosition(quotesWrapper, quoteId)
 
   if (!saveMyQuotes(getMyQuotes().filter(q => q.id !== quoteId))) return
   if (editingId === quoteId) resetForm()
   displayMyQuotes()
   showToast('Quote deleted')
 
-  // the next card (or the one before, if it was the last), or the form when none are left
-  cards = quotesWrapper.querySelectorAll('.picture-quote')
-  let nextCard = cards[Math.min(position, cards.length - 1)]
-  if (nextCard) {
-    nextCard.querySelector('[data-action="delete"]').focus()
-  } else {
-    quoteText.focus()
-  }
+  // no cards left: go to the form
+  if (!focusCardAt(quotesWrapper, position, 'delete')) quoteText.focus()
 }
 
 // the edit and delete buttons on the cards (quote-card.js handles copy, download, ...)

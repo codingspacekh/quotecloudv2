@@ -51,11 +51,6 @@ const setFooterYear = () => {
 
 // ---------- "back to top" button ----------
 
-// people who turned off animations in their computer settings get an instant jump
-const scrollBehavior = () => {
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
-}
-
 const setupBackToTop = () => {
   const button = document.createElement('button')
   button.className = 'back-to-top'

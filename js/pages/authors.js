@@ -72,8 +72,8 @@ const getFirstLetter = (name) => {
 }
 
 // "Émile" matches "emile" too: NFD splits "É" into "E" + an accent mark,
-// and ̀-ͯ are the accent marks, which are then removed
-const simplify = (text) => text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+// and \u0300-\u036f are the accent marks, which are then removed
+const simplify = (text) => text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
 
 const getFilteredAuthors = () => {
   let search = simplify(searchTerm.trim())
@@ -185,6 +185,10 @@ const getAuthor = async () => {
     displayAuthorInfo(author)
 
     let quotes = quotesData.data
+    if (quotes.length === 0) {
+      quotesWrapper.innerHTML = messageView('This author has no quotes yet.')
+      return
+    }
     quotesWrapper.innerHTML = quotes.map((quote, i) => createQuoteCard(quote, i)).join('')
   } catch (error) {
     console.error('Could not load this author:', error)

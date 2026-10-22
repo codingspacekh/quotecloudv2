@@ -108,6 +108,7 @@ Everything below lives in `localStorage`, so it stays on this computer and brows
 | `quoteCollections`| your collections, like `{ id, name }`            | `js/shared/favorites-store.js` |
 | `myQuotes`        | quotes you wrote                                 | `js/pages/my-quotes.js` |
 | `theme`, `quoteLength`, `authorSort`, `imageSize`, `imageTextSize` | small choices | `js/shared/settings.js` |
+| `famousPage`      | the last page of famous quotes, shown again when offline | `js/pages/home.js` |
 
 Your own quotes are stored in the same shape as quotes from the API
 (`content`, `author.name`, `tags`), plus `mine: true`, so `createQuoteCard()`

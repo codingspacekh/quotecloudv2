@@ -38,6 +38,11 @@ const messageView = (message) => `<p class="message">${message}</p>`
 // “The quote” — Author, as plain text (for copying, and at the top of pop-up windows)
 const formatQuote = (quote) => `“${quote.content}” — ${quote.author.name}`
 
+// people who turned off animations in their computer settings get an instant jump
+const scrollBehavior = () => {
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
+}
+
 
 // ---------- safe HTML ----------
 

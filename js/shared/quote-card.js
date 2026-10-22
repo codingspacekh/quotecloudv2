@@ -65,28 +65,30 @@ const getMainButtons = (quote) => {
   return getFavoriteButton(quote.id)
 }
 
-// favorites page only: your note and collections (handled in favorites.js)
-const getFavoriteTools = (quote) => {
-  let names = getCollections()
+// favorites page only: the collections the quote is in, and your note
+const getFavoriteInfo = (quote) => {
+  let chips = getCollections()
     .filter(collection => isInCollection(quote, collection.id))
     .map(collection => `<span class="collection-chip"><ion-icon name="folder-outline" aria-hidden="true"></ion-icon>${escapeHTML(collection.name)}</span>`)
     .join('')
 
-  return {
-    info: `
-      ${names ? `<div class="card-collections" aria-label="Collections">${names}</div>` : ''}
-      ${quote.note ? `<p class="quote-note"><span class="visually-hidden">Your note: </span>${escapeHTML(quote.note)}</p>` : ''}
-    `,
-    buttons: actionButton('note', 'chatbox-ellipses-outline', quote.note ? 'Edit your note' : 'Add a note')
-      + actionButton('collections', 'folder-outline', 'Add to a collection'),
-  }
+  return `
+  ${chips ? `<div class="card-collections" aria-label="Collections">${chips}</div>` : ''}
+  ${quote.note ? `<p class="quote-note"><span class="visually-hidden">Your note: </span>${escapeHTML(quote.note)}</p>` : ''}
+  `
+}
+
+// favorites page only: the note and collection buttons (their clicks are handled in favorites.js)
+const getFavoriteButtons = (quote) => {
+  return actionButton('note', 'chatbox-ellipses-outline', quote.note ? 'Edit your note' : 'Add a note')
+    + actionButton('collections', 'folder-outline', 'Add to a collection')
 }
 
 // the quote text is shown once, on top of the picture
 // options.favoriteTools: show your note and collection buttons (favorites page)
 const createQuoteCard = (quote, imgIndex = Math.floor(Math.random() * WALLPAPER_COUNT), options = {}) => {
   shownQuotes[quote.id] = quote
-  let tools = options.favoriteTools ? getFavoriteTools(quote) : { info: '', buttons: '' }
+  let showTools = options.favoriteTools === true
 
   return `
   <div class="picture-quote" data-id="${escapeHTML(quote.id)}" data-wallpaper="${imgIndex % WALLPAPER_COUNT}">
@@ -100,16 +102,31 @@ const createQuoteCard = (quote, imgIndex = Math.floor(Math.random() * WALLPAPER_
       <div class="tags">
         ${getTags(quote.tags)}
       </div>
-      ${tools.info}
+      ${showTools ? getFavoriteInfo(quote) : ''}
       <div class="card-actions">
         ${getMainButtons(quote)}
-        ${tools.buttons}
+        ${showTools ? getFavoriteButtons(quote) : ''}
         ${actionButton('copy', 'copy-outline', 'Copy quote')}
         ${actionButton('download', 'download-outline', 'Download as image')}
       </div>
     </div>
   </div>
   `
+}
+
+// where a card is in the list, so the keyboard can go to the one that takes its place
+const getCardPosition = (wrapper, quoteId) => {
+  return [...wrapper.querySelectorAll('.picture-quote')].indexOf(findCard(quoteId))
+}
+
+// after a card was removed: puts the keyboard on a button of the card now at that position
+// (or the last card, if the removed one was last). returns false when no cards are left
+const focusCardAt = (wrapper, position, action) => {
+  let cards = wrapper.querySelectorAll('.picture-quote')
+  let card = cards[Math.min(position, cards.length - 1)]
+  if (!card) return false
+  card.querySelector(`[data-action="${action}"]`).focus()
+  return true
 }
 
 // ---------- card buttons: favorite, copy, download ----------

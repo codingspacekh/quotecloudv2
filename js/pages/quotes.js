@@ -8,7 +8,7 @@ const params = new URLSearchParams(window.location.search)
 let query = params.get('query')
 let tag = params.get('tag')
 // a length in the address wins, otherwise use the one chosen last time
-let length = params.get('length') || loadSetting('quoteLength', 'all')
+let quoteLength = params.get('length') || loadSetting('quoteLength', 'all')
 
 // limit must be 10, 25, 50 or 100 on this API
 const QUOTES_URL = `${API_URL}/quotes?limit=25`
@@ -30,7 +30,7 @@ let loadNumber = 0
 
 
 const getQuotesURL = () => {
-  let url = QUOTES_URL + `&page=${page}` + (LENGTHS[length] || '')
+  let url = QUOTES_URL + `&page=${page}` + (LENGTHS[quoteLength] || '')
   if (query) {
     url += `&query=${encodeURIComponent(query)}`
   } else if (tag) {
@@ -74,10 +74,10 @@ onPageButtonClick(btnGroup, (newPage) => {
 })
 
 lengthFilter.addEventListener('change', () => {
-  length = lengthFilter.value
+  quoteLength = lengthFilter.value
   page = 0
-  saveSetting('quoteLength', length)
-  setURLParam('length', length === 'all' ? null : length)
+  saveSetting('quoteLength', quoteLength)
+  setURLParam('length', quoteLength === 'all' ? null : quoteLength)
   getQuotes()
 })
 
@@ -90,8 +90,8 @@ const start = () => {
     heading = `${tag} Quotes`
   }
 
-  if (!LENGTHS.hasOwnProperty(length)) length = 'all'
-  lengthFilter.value = length
+  if (!LENGTHS.hasOwnProperty(quoteLength)) quoteLength = 'all'
+  lengthFilter.value = quoteLength
 
   title.textContent = heading.toUpperCase()
   document.title = `${heading} | Quote Cloud`

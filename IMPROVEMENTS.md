@@ -9,7 +9,7 @@ Suggestions from a review on 2026-10-22. Ticked items are done.
 
 ## Worth doing
 
-- [ ] 3. **One native "Share" button** instead of the removed WhatsApp/X links. `navigator.share()` opens the phone's share menu (WhatsApp, Telegram, email…); where it isn't supported, copy the quote instead (reuse `getShareText()` and `copyText()` in `js/shared/quote-card.js`).
+- [ ] 3. **One native "Share" button** instead of the removed WhatsApp/X links. `navigator.share()` opens the phone's share menu (WhatsApp, Telegram, email…); where it isn't supported, copy the quote instead (reuse `formatQuote()` in `js/shared/ui.js` and `copyText()` in `js/shared/quote-card.js`).
 - [ ] 4. **A page for one quote**, e.g. `quote.html?id=...`, so a single quote can be linked to or bookmarked.
 - [ ] 5. **Back up favorites and my quotes.** They only live in `localStorage`, so clearing the browser or changing device loses them. Add "Export / Import JSON" on the favorites and my-quotes pages.
 - [ ] 6. **Page descriptions and preview tags.** No page has `<meta name="description">` or Open Graph tags (search results and link previews in chat apps use them).

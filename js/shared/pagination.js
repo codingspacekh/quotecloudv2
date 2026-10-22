@@ -33,6 +33,6 @@ const onPageButtonClick = (btnGroup, onChange) => {
     if (!btn || btn.disabled) return
 
     onChange(parseInt(btn.dataset.page))
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    window.scrollTo({ top: 0, behavior: scrollBehavior() })
   })
 }

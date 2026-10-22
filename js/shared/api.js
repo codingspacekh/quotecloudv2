@@ -67,14 +67,14 @@ const fetchOnce = async (url) => {
   const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT)
   try {
     const response = await fetch(url, { signal: controller.signal })
+    // no internet, so sw.js answered with a copy saved earlier
+    reportConnection(!response.headers.get('X-Saved-Copy'))
     if (!response.ok) {
       const error = new Error(`Request failed with status ${response.status}`)
       // e.g. 404 or 422 means "not found", so trying again won't help
       error.status = response.status
       throw error
     }
-    // no internet, so sw.js answered with a copy saved earlier
-    reportConnection(!response.headers.get('X-Saved-Copy'))
     return await response.json()
   } catch (error) {
     if (controller.signal.aborted) {
