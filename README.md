@@ -15,6 +15,37 @@ python3 -m http.server 8000
 then visit http://localhost:8000. With a server, "copy", "download as image"
 and offline mode work best (offline mode needs a server).
 
+## Run the tests
+
+The tests open every page in a real browser (Chromium, with [Playwright](https://playwright.dev))
+and click through it like a visitor. They need Node.js, the site itself still doesn't.
+
+```bash
+npm install                       # once
+npx playwright install chromium   # once, downloads the test browser
+npm test                          # runs every test
+npm run test:ui                   # a window where you can watch each test step by step
+```
+
+The tests never use the real quotes API: `tests/fake-api.js` answers instead, always with
+the same quotes (including a broken name like "Molière" and a quote with HTML in it),
+so the results don't depend on the internet. `npm test` starts its own server on port 8765.
+
+| File                            | Tests                                                        |
+| ------------------------------- | ------------------------------------------------------------ |
+| `tests/home.spec.js`            | quote of the day, random quote, famous quotes, "Try again"   |
+| `tests/quotes.spec.js`          | search, tags, length filter, page buttons, safe HTML         |
+| `tests/tags.spec.js`            | tag list order, tag links                                    |
+| `tests/authors.spec.js`         | author search (with accents), letters, sort, one author page |
+| `tests/favorites.spec.js`       | the heart, notes, collections, where the keyboard goes       |
+| `tests/my-quotes.spec.js`       | form errors, add, edit, delete                               |
+| `tests/card-actions.spec.js`    | copy and "download as image"                                 |
+| `tests/layout.spec.js`          | every page loads, theme, shortcuts, back-to-top, offline bar |
+| `tests/shared-helpers.spec.js`  | `fixText`, `escapeHTML`, `safeURL`, `createPageButtons`, ... |
+| `tests/service-worker.spec.js`  | every site file is in `APP_FILES` in `sw.js`, and nothing extra |
+
+A test also fails when any script on the page crashes (see `tests/helpers.js`).
+
 ## Folders
 
 ```
@@ -25,6 +56,9 @@ and offline mode work best (offline mode needs a server).
 ├── favorites.html        Quotes saved with the ♥ button, with your notes and collections
 ├── my-quotes.html        Write, edit and delete your own quotes
 ├── sw.js                 service worker: makes the site work offline (must stay in this folder)
+├── tests/                browser tests (see "Run the tests"), not part of the site
+├── package.json          only for the tests
+├── playwright.config.js  test settings
 │
 ├── assets/images/        logo, favicon, banner and the 10 card wallpapers
 │
