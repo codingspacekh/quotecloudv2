@@ -65,7 +65,7 @@ const getMainButtons = (quote) => {
   return getFavoriteButton(quote.id)
 }
 
-// favorites page only: the collections the quote is in, and your note
+// favorites page only: your note and collections (handled in favorites.js)
 const getFavoriteInfo = (quote) => {
   let chips = getCollections()
     .filter(collection => isInCollection(quote, collection.id))
@@ -78,7 +78,6 @@ const getFavoriteInfo = (quote) => {
   `
 }
 
-// favorites page only: the note and collection buttons (their clicks are handled in favorites.js)
 const getFavoriteButtons = (quote) => {
   return actionButton('note', 'chatbox-ellipses-outline', quote.note ? 'Edit your note' : 'Add a note')
     + actionButton('collections', 'folder-outline', 'Add to a collection')
@@ -114,13 +113,10 @@ const createQuoteCard = (quote, imgIndex = Math.floor(Math.random() * WALLPAPER_
   `
 }
 
-// where a card is in the list, so the keyboard can go to the one that takes its place
 const getCardPosition = (wrapper, quoteId) => {
   return [...wrapper.querySelectorAll('.picture-quote')].indexOf(findCard(quoteId))
 }
 
-// after a card was removed: puts the keyboard on a button of the card now at that position
-// (or the last card, if the removed one was last). returns false when no cards are left
 const focusCardAt = (wrapper, position, action) => {
   let cards = wrapper.querySelectorAll('.picture-quote')
   let card = cards[Math.min(position, cards.length - 1)]

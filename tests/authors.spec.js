@@ -1,4 +1,3 @@
-// author.html: the list of authors, and one author's page (js/pages/authors.js)
 const { test, expect } = require('./helpers')
 const { QUOTES } = require('./fake-api')
 
@@ -15,7 +14,6 @@ test.describe('authors list', () => {
     await expect(page.locator('.btn-group .btn').last()).toHaveText('3')
 
     await page.locator('.btn-group').getByRole('button', { name: '3', exact: true }).click()
-    // 120 - 48 - 48
     await expect(page.locator('.author-card')).toHaveCount(24)
   })
 
@@ -27,7 +25,6 @@ test.describe('authors list', () => {
     await expect(authorNames(page)).toHaveText(['Émile Zola'])
     await expect(page.locator('.result-count')).toHaveText('1 author')
 
-    // the broken name from the API is fixed first, then found without its accent
     await page.getByRole('searchbox', { name: 'Search authors' }).fill('moliere')
     await expect(authorNames(page)).toHaveText(['Molière'])
 
@@ -85,7 +82,6 @@ test.describe('one author', () => {
     await expect(page.locator('.author-info h3')).toHaveText('Albert Einstein')
     await expect(page.locator('.author-info a')).toHaveAttribute('href', 'https://en.wikipedia.org/wiki/Albert_Einstein')
     await expect(page.locator('.picture-quote')).toHaveCount(quoteCount)
-    // the list tools are hidden here
     await expect(page.locator('#authorFilters')).toBeHidden()
   })
 

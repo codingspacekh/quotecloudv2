@@ -209,7 +209,7 @@ const deleteQuote = async (quoteId) => {
   displayMyQuotes()
   showToast('Quote deleted')
 
-  // no cards left: go to the form
+  // the next card (or the one before, if it was the last), or the form when none are left
   if (!focusCardAt(quotesWrapper, position, 'delete')) quoteText.focus()
 }
 

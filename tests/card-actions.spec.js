@@ -1,11 +1,8 @@
-// The copy and "download as image" buttons on every card
-// (js/shared/quote-card.js, js/shared/image-dialog.js, js/shared/quote-image.js)
 const { test, expect, card, toast } = require('./helpers')
 const { getQuote } = require('./fake-api')
 
 const imageDialog = (page) => page.locator('.image-dialog')
 
-// the size of the preview picture, once it is drawn
 const previewSize = (page) => page.evaluate(() => {
   const canvas = document.querySelector('.image-dialog canvas')
   return `${canvas.width}x${canvas.height}`
@@ -40,7 +37,6 @@ test.describe('card buttons', () => {
     await expect(toast(page)).toHaveText('Image downloaded')
     await expect(imageDialog(page)).toBeHidden()
 
-    // the size chosen last time is used again
     await card(page, 'pineapple').getByRole('button', { name: 'Download as image' }).click()
     await expect(imageDialog(page).locator('input[name="size"]:checked')).toHaveValue('story')
   })

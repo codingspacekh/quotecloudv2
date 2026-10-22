@@ -1,4 +1,3 @@
-// index.html: quote of the day, random quote, famous quotes (js/pages/home.js)
 const { test, expect } = require('./helpers')
 const { API, reply } = require('./fake-api')
 
@@ -49,7 +48,6 @@ test.describe('home page', () => {
   })
 
   test('shows an error with "Try again" when the API fails, and loads again', async ({ page }) => {
-    // the API answers with errors until the test fixes it
     let broken = true
     await page.route(API, route => broken ? reply(route, {}, 500) : route.fallback())
     await page.goto('index.html')

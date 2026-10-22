@@ -1,4 +1,3 @@
-// my-quotes.html: write, edit and delete your own quotes (js/pages/my-quotes.js)
 const { test, expect, card, toast, confirmDialog } = require('./helpers')
 
 const addQuote = async (page, text, author = '') => {
@@ -24,7 +23,6 @@ test.describe('my quotes', () => {
     await expect(page.locator('#quoteText')).toBeFocused()
 
     await page.fill('#quoteText', 'Short')
-    // typing clears the message
     await expect(page.locator('#quoteTextError')).toHaveText('')
     await expect(page.locator('#quoteTextCount')).toHaveText('5 / 300')
     await submit.click()
@@ -55,12 +53,10 @@ test.describe('my quotes', () => {
 
     await expect(toast(page)).toHaveText('Quote added')
     await expect(page.locator('#my-quotes .title')).toHaveText('MY QUOTES (2)')
-    // newest first
     await expect(page.locator('blockquote')).toHaveText(['Small steps every day.', 'Be kind whenever possible.'])
     await expect(card(page, 'Be kind').locator('cite')).toHaveText('Anonymous')
     await expect(card(page, 'Small steps').locator('cite')).toHaveText('Grandma')
     await expect(page.locator('[data-action="favorite"]')).toHaveCount(0)
-    // the form is empty again
     await expect(page.locator('#quoteText')).toHaveValue('')
 
     await page.reload()

@@ -1,5 +1,3 @@
-// Things every page has: menu, theme button, keyboard shortcuts, back-to-top, offline bar
-// (js/theme.js, js/shared/layout.js)
 const { test, expect, toast } = require('./helpers')
 const { API, reply } = require('./fake-api')
 
@@ -19,7 +17,6 @@ test.describe('every page', () => {
     test(`${file} loads and marks "${menu}" in the menu`, async ({ page }) => {
       await page.goto(file)
 
-      // the content arrived (the loading placeholders are gone)
       await expect(page.locator('.picture-quote:not(.skeleton), .tag-card:not(.skeleton), .author-card:not(.skeleton), .message').first()).toBeVisible()
       await expect(page.locator('nav a[aria-current="page"]')).toHaveAccessibleName(menu)
       await expect(page.locator('footer .year')).toHaveText(String(new Date().getFullYear()))
@@ -67,7 +64,6 @@ test.describe('keyboard shortcuts', () => {
     await page.keyboard.press('/')
     await expect(search).toBeFocused()
 
-    // while typing, letters are just letters (T doesn't switch the theme)
     await page.keyboard.type('trust')
     await expect(search).toHaveValue('trust')
     await expect(theme(page)).toHaveAttribute('data-theme', 'light')
@@ -87,7 +83,6 @@ test.describe('back to top', () => {
   test('shows after scrolling down, and goes back to the top', async ({ page }) => {
     await page.goto('quote.html')
     await expect(page.locator('.picture-quote')).toHaveCount(25)
-    // (it is hidden until you scroll, so getByRole wouldn't find it yet)
     const button = page.locator('.back-to-top')
     await expect(button).not.toHaveClass(/show/)
 
@@ -96,7 +91,6 @@ test.describe('back to top', () => {
 
     await button.click()
     await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0)
-    // the keyboard starts from the menu again
     await expect(page.locator('header a').first()).toBeFocused()
   })
 })
@@ -116,7 +110,6 @@ test.describe('offline', () => {
   })
 
   test('the bar shows when the quotes are a saved copy from sw.js', async ({ page }) => {
-    // sw.js adds this header when it answers with a copy saved earlier
     await page.route(API, route => {
       return reply(route, [{ id: 'Life', name: 'Life', quotesCount: 1 }], 200, { 'X-Saved-Copy': 'true' })
     })

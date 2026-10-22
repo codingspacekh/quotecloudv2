@@ -1,5 +1,3 @@
-// Small functions from js/shared/, tested straight inside the page
-// (the files are plain <script>s, so their functions are on window)
 const { test, expect } = require('./helpers')
 const { BROKEN_MOLIERE } = require('./fake-api')
 
@@ -42,7 +40,6 @@ test.describe('shared helpers', () => {
   })
 
   test('createPageButtons: ← 1 … 4 5 [6] 7 8 … 21 →', async ({ page }) => {
-    // returns the text of each button, and which ones are active or disabled
     const buttonsFor = (pageIndex, lastPage) => page.evaluate(([pageIndex, lastPage]) => {
       let box = document.createElement('div')
       box.innerHTML = createPageButtons(pageIndex, lastPage)
@@ -56,13 +53,11 @@ test.describe('shared helpers', () => {
     expect(await buttonsFor(5, 20)).toEqual(['←', '1', '…', '4', '5', '[6]', '7', '8', '…', '21', '→'])
     expect(await buttonsFor(0, 3)).toEqual(['(←)', '[1]', '2', '3', '4', '→'])
     expect(await buttonsFor(3, 3)).toEqual(['←', '1', '2', '3', '[4]', '(→)'])
-    // one page only: no buttons at all
     expect(await buttonsFor(0, 0)).toEqual([])
   })
 
   test('settings survive when localStorage is blocked', async ({ page }) => {
     let results = await page.evaluate(() => {
-      // pretend the browser blocks localStorage, like some private windows
       Storage.prototype.getItem = () => { throw new Error('blocked') }
       Storage.prototype.setItem = () => { throw new Error('blocked') }
       return [loadSetting('theme', 'dark'), loadJSON('myQuotes', []), saveJSON('myQuotes', [1])]

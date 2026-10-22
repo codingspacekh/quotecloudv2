@@ -1,4 +1,3 @@
-// tag.html: the list of tags (js/pages/tags.js)
 const { test, expect } = require('./helpers')
 
 test.describe('tags page', () => {

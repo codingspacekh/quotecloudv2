@@ -1,4 +1,3 @@
-// quote.html: all quotes, search, tags, length filter and page buttons (js/pages/quotes.js)
 const { test, expect, card } = require('./helpers')
 
 test.describe('quotes page', () => {
@@ -7,7 +6,6 @@ test.describe('quotes page', () => {
 
     await expect(page.locator('#quotes .title')).toHaveText('QUOTES')
     await expect(page.locator('.picture-quote')).toHaveCount(25)
-    // 81 quotes, 25 on each page
     await expect(page.locator('.btn-group .btn-active')).toHaveText('1')
     await expect(page.locator('.btn-group .btn').last()).toHaveText('4')
     await expect(page.getByRole('button', { name: 'Previous page' })).toBeDisabled()
@@ -77,7 +75,6 @@ test.describe('quotes page', () => {
       expect(length).toBeLessThanOrEqual(60)
     }
 
-    // opened again without ?length=, it uses the length chosen last time
     await page.goto('quote.html')
     await expect(page.locator('#lengthFilter')).toHaveValue('short')
   })

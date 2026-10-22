@@ -52,7 +52,6 @@ const setCurrentCollection = (collectionId) => {
   setURLParam('collection', collectionId === ALL ? null : collectionId)
 }
 
-// puts the keyboard on the collection being shown (the bar is empty when nothing is saved)
 const focusCurrentCollection = () => {
   const btn = collectionBar.querySelector('.btn-active')
   if (btn) btn.focus()
@@ -135,7 +134,7 @@ const refreshCard = (quoteId, action) => {
     let position = getCardPosition(quotesWrapper, quoteId)
     card.remove()
     if (!quotesWrapper.querySelector('.picture-quote')) displayFavorites()
-    // the button that was used is gone, so go to the next quote (or the collection being shown)
+    // the button that was used is gone, so go to the collection being shown
     if (!focusCardAt(quotesWrapper, position, action)) focusCurrentCollection()
     return
   }
@@ -326,7 +325,6 @@ collectionActions.addEventListener('click', async (e) => {
     deleteCollection(collection.id)
     setCurrentCollection(ALL)
     displayFavorites()
-    // the delete button is gone now
     focusCurrentCollection()
     showToast('Collection deleted')
   }
@@ -359,7 +357,6 @@ document.addEventListener('favorites-changed', (e) => {
   if (!quotesWrapper.querySelector('.picture-quote')) {
     displayFavorites()
   }
-  // the heart that was clicked is gone, so go to the next quote's heart
   if (!focusCardAt(quotesWrapper, position, 'favorite')) focusCurrentCollection()
 })
 

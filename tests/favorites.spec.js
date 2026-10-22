@@ -1,12 +1,9 @@
-// favorites.html: saved quotes, notes and collections
-// (js/pages/favorites.js, js/shared/favorites-store.js, the heart in js/shared/quote-card.js)
 const { test, expect, saveInBrowser, favorite, card, toast, confirmDialog } = require('./helpers')
 const { getQuote } = require('./fake-api')
 
 const heart = (cardLocator) => cardLocator.locator('[data-action="favorite"]')
 const collectionBar = (page) => page.locator('.collection-bar')
 
-// three favorites, newest first
 const saveThreeFavorites = (page, extra = {}) => saveInBrowser(page, {
   favoriteQuotes: [favorite(getQuote('q1')), favorite(getQuote('q2')), favorite(getQuote('q42'))],
   ...extra,
@@ -63,7 +60,6 @@ test.describe('favorites page', () => {
 
     await heart(card(page, 'Quote number 2:')).click()
     await expect(confirmDialog(page)).toContainText('Remove from favorites?')
-    // the safe choice has the keyboard
     await expect(confirmDialog(page).getByRole('button', { name: 'Cancel' })).toBeFocused()
 
     await confirmDialog(page).getByRole('button', { name: 'Cancel' }).click()
@@ -111,7 +107,6 @@ test.describe('notes', () => {
     await expect(toast(page)).toHaveText('Note saved')
     await expect(pineapple.getByRole('button', { name: 'Edit your note' })).toBeFocused()
 
-    // still there after a reload
     await page.reload()
     await expect(pineapple.locator('.quote-note')).toContainText('Makes me smile')
 
@@ -150,7 +145,6 @@ test.describe('collections', () => {
     await expect(dialog.getByRole('checkbox', { name: 'Motivation' })).toBeChecked()
     await expect(toast(page)).toHaveText('Added to "Motivation"')
 
-    // the same name again (in other letters) is not allowed
     await page.fill('#newCollectionName', 'MOTIVATION')
     await dialog.getByRole('button', { name: 'Add', exact: true }).click()
     await expect(page.locator('#newCollectionError')).toHaveText('You already have a collection with this name.')
@@ -160,7 +154,6 @@ test.describe('collections', () => {
     await expect(pineapple.locator('.collection-chip')).toHaveText('Motivation')
     await expect(pineapple.getByRole('button', { name: 'Add to a collection' })).toBeFocused()
 
-    // only the pineapple quote is in the collection, and the address remembers it
     await collectionBar(page).getByRole('button', { name: /Motivation/ }).click()
     await expect(page).toHaveURL(/collection=c-/)
     await expect(page.locator('.picture-quote')).toHaveCount(1)

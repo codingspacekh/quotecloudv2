@@ -1,13 +1,9 @@
-// sw.js saves every file in APP_FILES for offline use.
-// A file missing from the list doesn't work offline, a file in the list that
-// doesn't exist stops the whole service worker from installing.
 const fs = require('fs')
 const path = require('path')
 const { test, expect } = require('./helpers')
 
 const ROOT = path.join(__dirname, '..')
 
-// the files listed in APP_FILES in sw.js
 const getListedFiles = () => {
   const code = fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8')
   const list = code.match(/const APP_FILES = \[([\s\S]*?)\]/)[1]
@@ -16,7 +12,6 @@ const getListedFiles = () => {
     .filter(file => file !== './')
 }
 
-// every file in this folder (and below) that is part of the site
 const getSiteFiles = (folder = '') => {
   let files = []
   for (const entry of fs.readdirSync(path.join(ROOT, folder), { withFileTypes: true })) {
