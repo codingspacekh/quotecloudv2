@@ -12,6 +12,11 @@
     width: 90%;
     margin: auto;
   }
+
+  /* home page: the quote of the day (and its loading shape) is half the screen wide */
+  .today-quote-wrapper .picture-quote {
+    width: 50%;
+  }
 }
 
 @media only screen and (min-width: 1000px) {
@@ -56,6 +61,15 @@
 
   .overlay blockquote {
     font-size: 16px;
+  }
+
+  /* the screen is small, so the footer only shows at the end of the page */
+  footer {
+    position: static;
+  }
+
+  .back-to-top {
+    bottom: 20px;
   }
 }
 

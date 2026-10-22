@@ -73,9 +73,17 @@ header nav {
 footer {
   /* takes all the empty space above it, so it's pushed to the bottom of the screen */
   margin-top: auto;
+  /* stays at the bottom of the screen while you scroll, like the header at the top */
+  position: sticky;
+  bottom: 0;
+  z-index: 97;
   text-align: center;
   padding: 15px;
   background-color: var(--footer-bg);
+}
+
+footer .copyright {
+  font-weight: 700;
 }
 
 /* shown under the header while there is no internet (made in js/shared/layout.js).

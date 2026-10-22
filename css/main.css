@@ -1,4 +1,3 @@
-@import url(https://fonts.googleapis.com/css?family=Titillium+Web:200,200italic,300,300italic,regular,italic,600,600italic,700,700italic,900);
 
 /* The only stylesheet the pages load. The order matters: later files win. */
 @import url('variables.css');

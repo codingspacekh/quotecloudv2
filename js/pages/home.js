@@ -1,6 +1,6 @@
 const randomBtn = document.querySelector('#randomQuoteBtn')
 const todayQuoteTitle = document.querySelector('#today-quote .title')
-const todayQuoteWapper = document.querySelector('.today-quote-wrapper')
+const todayQuoteWrapper = document.querySelector('.today-quote-wrapper')
 const quotesWrapper = document.querySelector('.quotes-wrapper')
 
 let SINGLE_QUOTE_URL = `${API_URL}/quotes/random?maxLength=150`
@@ -20,7 +20,7 @@ const getDayNumber = () => {
 // the day number picks one quote out of the whole list
 const getQuoteOfTheDay = async () => {
   todayQuoteTitle.textContent = `QUOTE OF THE DAY`
-  todayQuoteWapper.innerHTML = quoteSkeletons(1)
+  todayQuoteWrapper.innerHTML = quoteSkeletons(1)
   try {
     // the first page also tells us how many quotes there are
     let data = await fetchJSON(DAILY_QUOTE_URL + `&page=0`)
@@ -32,11 +32,11 @@ const getQuoteOfTheDay = async () => {
     }
 
     let quote = data.data[quoteNumber % 10]
-    todayQuoteWapper.innerHTML = createQuoteCard(quote, getDayNumber())
+    todayQuoteWrapper.innerHTML = createQuoteCard(quote, getDayNumber())
 
   } catch (error) {
     console.log('some error occurred:', error.message)
-    showError(todayQuoteWapper, 'Could not load the quote of the day.', getQuoteOfTheDay, error)
+    showError(todayQuoteWrapper, 'Could not load the quote of the day.', getQuoteOfTheDay, error)
   }
 }
 
@@ -45,17 +45,17 @@ const getRandomQuote = async () => {
   // otherwise an older answer could replace a newer one
   randomBtn.disabled = true
   todayQuoteTitle.textContent = `RANDOM QUOTE`
-  todayQuoteWapper.innerHTML = quoteSkeletons(1)
+  todayQuoteWrapper.innerHTML = quoteSkeletons(1)
   try {
     const data = await fetchJSON(SINGLE_QUOTE_URL)
 
     let quote = data.quote
     // console.log(quote)
-    todayQuoteWapper.innerHTML = createQuoteCard(quote)
+    todayQuoteWrapper.innerHTML = createQuoteCard(quote)
 
   } catch (error) {
     console.log('some error occurred:', error.message)
-    showError(todayQuoteWapper, 'Could not load a quote.', getRandomQuote, error)
+    showError(todayQuoteWrapper, 'Could not load a quote.', getRandomQuote, error)
   }
   randomBtn.disabled = false
 }

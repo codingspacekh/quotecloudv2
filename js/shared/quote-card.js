@@ -82,7 +82,6 @@ const getFavoriteTools = (quote) => {
 // options.favoriteTools: show your note and collection buttons (favorites page)
 const createQuoteCard = (quote, imgIndex = Math.floor(Math.random() * WALLPAPER_COUNT), options = {}) => {
   shownQuotes[quote.id] = quote
-  let shareText = encodeURIComponent(getShareText(quote))
   let tools = options.favoriteTools ? getFavoriteTools(quote) : { info: '', buttons: '' }
 
   return `
@@ -103,12 +102,6 @@ const createQuoteCard = (quote, imgIndex = Math.floor(Math.random() * WALLPAPER_
         ${tools.buttons}
         ${actionButton('copy', 'copy-outline', 'Copy quote')}
         ${actionButton('download', 'download-outline', 'Download as image')}
-        <a class="card-action" href="https://wa.me/?text=${shareText}" target="_blank" rel="noopener" aria-label="Share on WhatsApp" title="Share on WhatsApp">
-          <ion-icon name="logo-whatsapp"></ion-icon>
-        </a>
-        <a class="card-action" href="https://x.com/intent/tweet?text=${shareText}" target="_blank" rel="noopener" aria-label="Share on X" title="Share on X">
-          <ion-icon name="logo-x"></ion-icon>
-        </a>
       </div>
     </div>
   </div>

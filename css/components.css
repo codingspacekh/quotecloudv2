@@ -128,7 +128,7 @@
   gap: 5px;
 }
 
-/* favorite, copy, download and share buttons */
+/* favorite, copy and download buttons */
 .card-actions {
   display: flex;
   flex-wrap: wrap;
@@ -305,7 +305,8 @@
 .back-to-top {
   position: fixed;
   right: 20px;
-  bottom: 20px;
+  /* above the sticky footer, so it doesn't cover the footer text (phones: see responsive.css) */
+  bottom: 100px;
   z-index: 98;
   width: 48px;
   height: 48px;
