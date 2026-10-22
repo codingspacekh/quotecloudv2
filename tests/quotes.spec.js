@@ -26,6 +26,27 @@ test.describe('quotes page', () => {
     await expect(page.locator('.btn-group .btn-active')).toHaveText('2')
   })
 
+  test('a last card alone in its row sits in the middle column', async ({ page }) => {
+    await page.goto('quote.html')
+    await expect(page.locator('.picture-quote')).toHaveCount(25)
+
+    let second = await page.locator('.picture-quote').nth(1).boundingBox()
+    let last = await page.locator('.picture-quote').last().boundingBox()
+    expect(last.x).toBe(second.x)
+
+    await page.goto('quote.html?tag=Love')
+    await expect(page.locator('.picture-quote')).toHaveCount(15)
+    let third = await page.locator('.picture-quote').nth(2).boundingBox()
+    last = await page.locator('.picture-quote').last().boundingBox()
+    expect(last.x).toBe(third.x)
+
+    await page.goto('quote.html?query=pineapple')
+    await expect(page.locator('.picture-quote')).toHaveCount(1)
+    let only = await page.locator('.picture-quote').boundingBox()
+    let wrapper = await page.locator('.quotes-wrapper').boundingBox()
+    expect(only.x - wrapper.x).toBeLessThan(wrapper.width / 3)
+  })
+
   test('the search box on any page opens the results', async ({ page }) => {
     await page.goto('tag.html')
 
